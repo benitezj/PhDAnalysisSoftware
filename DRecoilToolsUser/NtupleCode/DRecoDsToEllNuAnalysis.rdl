@@ -1,0 +1,448 @@
+#ifndef DRecoDsToEllNuAnalysis_hh
+#define DRecoDsToEllNuAnalysis_hh
+
+#define NRuns 17 // {Runs 1-6, Run7Y3S, Run7Y2S} On and Off , All
+#define NSPModes 31 
+/* 
+ 0 SP998        uds
+ 1 SP1005       c
+ 2 SP1235       B+
+ 3 SP1237       B0
+ 4 SP3429       tau
+ 5 SP3046       Ds+ -> mu+ nu
+ 6 SP3047       Ds- -> mu- nu
+ 7 SP9756       Ds+ -> K0 K+
+ 8 SP9757       Ds+ -> eta pi+
+ 9 SP9758       Ds+ -> tau+ nu ; tau+ -> pi+ nu
+10 Data         Data
+11 SP9777       Ds+ -> e+  nu
+12 SP9778       Ds+ -> e-  nu
+13 SP9949/9967  Ds+ -> tau+ nu ; tau+ -> mu+ nu nu
+14 SP9950/9968  Ds- -> tau- nu ; tau+ -> mu- nu nu
+15 SP9951/9969  Ds+ -> tau+ nu ; tau+ -> e+  nu nu
+16 SP9952/9970  Ds+ -> tau- nu ; tau+ -> e-  nu nu
+17 SP9953/9971  Ds+ -> K0 mu+ nu
+18 SP9954/9972  Ds- -> K0 mu- nu
+19 SP9955/9976  Ds+ -> K0 e+  nu
+20 SP9956/9977  Ds- -> K0 e-  nu
+21 SP9957/9978  Ds+ -> phi mu+ nu
+22 SP9958/9979  Ds- -> phi mu- nu
+23 SP9959/9980  Ds+ -> phi e+  nu
+24 SP9960/9981  Ds- -> phi e-  nu
+25 SP9961/9982  Ds+ -> eta mu+ nu
+26 SP9962/9983  Ds- -> eta mu- nu
+27 SP9963/9984  Ds+ -> eta e+  nu
+28 SP9964/9985  Ds- -> eta e-  nu
+29 SP9965       Ds+ -> tau+ nu ; tau+ -> pi+ nu
+30 SP9966       Ds- -> tau- nu ; tau- -> pi- nu
+*/
+
+#define DsMassMin 1.82
+#define DsMassMax 2.12
+
+// Get inherited headers
+#include "DRecoTagAnalysis.hh"
+#include "DRecoDsInclusiveAnalysis.hh"
+
+class DRecoDsToEllNuAnalysis:public DRecoDsInclusiveAnalysis
+{
+  ClassDef(DRecoDsToEllNuAnalysis, 1) ;
+
+ public:
+  DRecoDsToEllNuAnalysis(Int_t MCorDATA, TString OutputDir, Int_t theSPMode, Int_t theRun) ;
+  ~DRecoDsToEllNuAnalysis() ;
+  
+  Int_t ReduceNtuple() ;
+  void SetDsToEllNuReduceCuts()
+  {
+  }
+  
+  Float_t       luminosity[NRuns] ;           // fb^-1
+  Float_t NEventsGenerated[NRuns][NSPModes] ; // R-24
+  Float_t           weight[NRuns][NSPModes] ; // R-24
+  Float_t            crossSection[NSPModes] ; // nb
+
+ protected:
+
+  void  FillDsToEllNuVars() ;
+  void PrintDaughters(Int_t Idx,Int_t depth) ;
+  Int_t SetDsToEllNuBranches() ;
+  Int_t MakeDsToEllNuReducedNtupleBranches() ;
+  Int_t SetDsToEllNuReducedNtupleBranches() ;
+ 
+  Bool_t DsToEllNuPassesCuts() ;
+
+  // Is this blinded data?
+  Bool_t blind[6] ;
+  
+  // Declaration of input leave types
+  Float_t          NupxLabRaw_in[MAXNCANDS] ;
+  Float_t          NupyLabRaw_in[MAXNCANDS] ;
+  Float_t          NupzLabRaw_in[MAXNCANDS] ;
+  Float_t      NuenergyLabRaw_in[MAXNCANDS] ;
+  Float_t             MupxRaw_in[MAXNCANDS] ;
+  Float_t             MupyRaw_in[MAXNCANDS] ;
+  Float_t             MupzRaw_in[MAXNCANDS] ;
+  Float_t         MuenergyRaw_in[MAXNCANDS] ;
+  Float_t         NupxLabCorr_in[MAXNCANDS] ;
+  Float_t         NupyLabCorr_in[MAXNCANDS] ;
+  Float_t         NupzLabCorr_in[MAXNCANDS] ;
+  Float_t                 Nup3CM[MAXNCANDS] ;
+  Float_t              NucosthCM[MAXNCANDS] ;
+  Float_t                NuphiCM[MAXNCANDS] ;
+  Float_t          NuenergyCM_in[MAXNCANDS] ;
+  Float_t                 Mup3CM[MAXNCANDS] ;
+  Float_t              MucosthCM[MAXNCANDS] ;
+  Float_t                MuphiCM[MAXNCANDS] ;
+  Float_t                  Ep3CM[MAXNCANDS] ;
+  Float_t               EcosthCM[MAXNCANDS] ;
+  Float_t                 EphiCM[MAXNCANDS] ;
+
+  Int_t                  MuMCIdx[MAXNCANDS] ;
+  Int_t                   EMCIdx[MAXNCANDS] ;
+  Int_t                   MuLund[MAXNCANDS] ;
+
+  Float_t               ProbChi2[MAXNCANDS] ;
+  Float_t                   Chi2[MAXNCANDS] ;
+  Int_t                     Ndof[MAXNCANDS] ;
+ 
+  Float_t                ThrustX[MAXNCANDS] ;
+  Float_t                ThrustY[MAXNCANDS] ;
+  Float_t                ThrustZ[MAXNCANDS] ;
+  Float_t              ThrustMag[MAXNCANDS] ;
+
+  Float_t                     R0[MAXNCANDS] ;
+  Float_t                     R1[MAXNCANDS] ;
+  Float_t                     R2[MAXNCANDS] ;
+  Float_t                     R3[MAXNCANDS] ;
+  Float_t                     R4[MAXNCANDS] ;
+
+  Float_t          EExtraNeutral[MAXNCANDS] ;
+  Int_t            NExtraNeutral[MAXNCANDS] ;
+  Int_t             NExtraTracks[MAXNCANDS] ;
+
+  Float_t               Extra1px[MAXNCANDS] ;
+  Float_t               Extra1py[MAXNCANDS] ;
+  Float_t               Extra1pz[MAXNCANDS] ;
+  Float_t               Extra2px[MAXNCANDS] ;
+  Float_t               Extra2py[MAXNCANDS] ;
+  Float_t               Extra2pz[MAXNCANDS] ;
+
+  Float_t             PMissCosTh[MAXNCANDS] ;
+  Float_t               PMissPhi[MAXNCANDS] ;
+  Float_t                  PMiss[MAXNCANDS] ;
+  Float_t                  EMiss[MAXNCANDS] ;
+
+  Float_t                Deltap3[MAXNCANDS] ;
+  Float_t              EvtDsMass[MAXNCANDS] ;
+  Int_t               SignalMode[MAXNCANDS] ;
+
+  Int_t                               nTRK  ;
+  Int_t                                nMu  ;
+  Int_t                                 nE  ;
+  Float_t                      TRKpxCM[500] ;
+  Float_t                      TRKpyCM[500] ;
+  Float_t                      TRKpzCM[500] ;
+  Int_t                       MuTrkIdx[500] ;
+  Int_t                        ETrkIdx[500] ;
+  
+  Int_t                 MuSelectorsMap[500] ;
+  Int_t                  ESelectorsMap[500] ;
+
+  Int_t                             upperID ;
+  Int_t                             lowerID ;
+
+  Int_t                      TRKnDchXY[500] ;
+  Int_t                       TRKnDchZ[500] ;
+  Int_t                      TRKnSvtXY[500] ;
+  Int_t                       TRKnSvtZ[500] ;
+
+  // Declaration of output leaf types
+  Int_t   EllLund                    ;
+
+  Float_t NupxLabRaw                 ;
+  Float_t NupyLabRaw                 ;
+  Float_t NupzLabRaw                 ;
+  Float_t NuenergyLabRaw             ;
+  Float_t mm2Raw                     ;
+  Float_t MupxLabRaw                 ;
+  Float_t MupyLabRaw                 ;
+  Float_t MupzLabRaw                 ;
+  Float_t MuenergyLabRaw             ;
+  Float_t EpxLabRaw                  ;
+  Float_t EpyLabRaw                  ;
+  Float_t EpzLabRaw                  ;
+  Float_t EenergyLabRaw              ;
+  Float_t PipxLabRaw                 ;
+  Float_t PipyLabRaw                 ;
+  Float_t PipzLabRaw                 ;
+  Float_t PienergyLabRaw             ;
+  Float_t NupxLabCorr                ;
+  Float_t NupyLabCorr                ;
+  Float_t NupzLabCorr                ;
+  Float_t NupxCM                     ;
+  Float_t NupyCM                     ;
+  Float_t NupzCM                     ;
+  Float_t NuenergyCM                 ;
+  Float_t MupxCM                     ;
+  Float_t MupyCM                     ;
+  Float_t MupzCM                     ;
+  Float_t EpxCM                      ;
+  Float_t EpyCM                      ;
+  Float_t EpzCM                      ;
+  Float_t PipxCM                     ;
+  Float_t PipyCM                     ;
+  Float_t PipzCM                     ;
+  Float_t TagpxCM                    ;
+  Float_t TagpyCM                    ;
+  Float_t TagpzCM                    ;
+  Float_t GampxCM                    ;
+  Float_t GampyCM                    ;
+  Float_t GampzCM                    ;
+  Float_t KpxCM                      ;
+  Float_t KpyCM                      ;
+  Float_t KpzCM                      ;
+  Float_t DsStpxCM                   ;
+  Float_t DsStpyCM                   ;
+  Float_t DsStpzCM                   ;
+  Float_t DspxCM                     ;
+  Float_t DspyCM                     ;
+  Float_t DspzCM                     ;
+
+  Float_t mm2                        ;
+  Float_t mm2Stretch                 ;
+  Float_t mm2Shift                   ;
+  Float_t Pip3Ds                     ;
+
+  Float_t deltap3                    ;
+  Float_t deltap3Joerg               ;
+  Float_t deltap3Fit                 ;
+  Float_t deltap3FitJoerg            ;
+  Float_t pDiff                      ;
+  Float_t coneEnergy                 ;
+  
+  Float_t probChi2                   ;
+  Float_t chi2                       ;
+  Int_t   ndof                       ;
+
+  Float_t thetaDsStDs                ;
+  Float_t thetaDsStMu                ;
+  Float_t thetaDsStE                 ;
+  Float_t thetaDsStPi                ;
+  Float_t thetaDsStNu                ;
+  Float_t thetaDsStGam               ;
+  Float_t thetaDsMu                  ;
+  Float_t thetaDsE                   ;
+  Float_t thetaDsPi                  ;
+  Float_t thetaDsNu                  ;
+  Float_t thetaDsGam                 ;
+  Float_t thetaMuNu                  ;
+  Float_t thetaMuGam                 ;
+  Float_t thetaENu                   ;
+  Float_t thetaEGam                  ;
+  Float_t thetaPiNu                  ;
+  Float_t thetaPiGam                 ;
+  Float_t thetaNuGam                 ;
+  Float_t thetaDsStTag               ;
+  Float_t thetaDsStK                 ;
+  Float_t thetaDsTag                 ;
+  Float_t thetaDsK                   ;
+  Float_t thetaMuTag                 ;
+  Float_t thetaMuK                   ;
+  Float_t thetaETag                  ;
+  Float_t thetaEK                    ;
+  Float_t thetaPiTag                 ;
+  Float_t thetaPiK                   ;
+
+  Int_t   EllMode                    ;
+  Int_t   EllMCLund                  ;
+  Int_t   DsPresence                 ;
+  Int_t   HasDsSt                    ;
+  Int_t   HasDs                      ;
+  Int_t   HasDsToMuNu                ;
+  Int_t   HasDsToENu                 ;
+  Int_t   HasDsToTauNu               ;
+  Int_t   HasDsToTauNuTauToMuNuNu    ;
+  Int_t   HasDsToTauNuTauToENuNu     ;
+  Int_t   HasDsToTauNuTauToPiNu      ;
+  Int_t   HasDsToTauNuTauToPiPi0Nu   ;
+  Int_t   HasDsToTauNuTauToPiPi0Pi0Nu;
+  Int_t   HasDsToTauNuTauToRhoNu     ;
+  Int_t   HasDsToTauNuTauToOmegaPiNu ;
+  Int_t   DsDecayRateType            ;
+  Float_t DsDecayRateWeight          ;
+
+  Int_t   dsd2Idx                    ;
+  Int_t   EllMCIdx                   ;
+
+  Float_t thrustX                    ;
+  Float_t thrustY                    ;
+  Float_t thrustZ                    ;
+  Float_t thrustMag                  ;
+
+  Float_t r0                         ;
+  Float_t r1                         ;
+  Float_t r2                         ;
+  Float_t r3                         ;
+  Float_t r4                         ;
+
+  Float_t eExtraNeutral              ;
+  Int_t   nExtraNeutral              ;
+  Int_t   nExtraTracks               ;
+
+  Float_t pMissCosTh                 ;
+  Float_t pMissPhi                   ;
+  Float_t pMiss                      ;
+  Float_t eMiss                      ;
+
+  Int_t   ellLund                    ;
+  Int_t   EllMothLund                ;
+  Int_t   EllGMothLund               ;
+  Int_t   EllG2MothLund              ;
+  Int_t   EllG3MothLund              ;
+  Int_t   EllSib1Lund                ;
+  Int_t   EllSib2Lund                ;
+  Int_t   EllSib3Lund                ;
+  Int_t   EllSib4Lund                ;
+  Int_t   EllSib5Lund                ;
+  Int_t   EllSib6Lund                ;
+  Int_t   EllSib7Lund                ;
+  Int_t   EllSib8Lund                ;
+  Int_t   EllSib9Lund                ;
+  Int_t   EllSib10Lund               ;
+  Int_t   EllSib11Lund               ;
+  Int_t   EllSib12Lund               ;
+  Int_t   EllSib13Lund               ;
+  Int_t   EllSib14Lund               ;
+  Int_t   EllMothDauLen              ;
+  Int_t   EllSibNGamma               ;
+
+  Float_t evtDsMass                  ;
+
+  Float_t smallest_thetaNuGam        ;
+  Float_t smallest_thetaNuTRK        ;
+
+  Int_t   MuMinimumIonizing          ;
+  Int_t   MuVeryLoose                ;
+  Int_t   MuLoose                    ;
+  Int_t   MuTight                    ;
+  Int_t   MuVeryTight                ;
+  Int_t   MuNNVeryLoose              ;
+  Int_t   MuNNLoose                  ;
+  Int_t   MuNNTight                  ;
+  Int_t   MuNNVeryTight              ;
+  Int_t   MuNNVeryLooseFakeRate      ;
+  Int_t   MuNNLooseFakeRate          ;
+  Int_t   MuNNTightFakeRate          ;
+  Int_t   MuNNVeryTightFakeRate      ;
+  Int_t   MuLikeVeryLoose            ;
+  Int_t   MuLikeLoose                ;
+  Int_t   MuLikeTight                ;
+  Int_t   MuLikeVeryTight            ;
+  Int_t   MuBDTVeryLoose             ;
+  Int_t   MuBDTLoose                 ;
+  Int_t   MuBDTTight                 ;
+  Int_t   MuBDTVeryTight             ;
+  Int_t   MuBDTVeryLooseFakeRate     ;
+  Int_t   MuBDTLooseFakeRate         ;
+  Int_t   MuBDTTightFakeRate         ;
+  Int_t   MuBDTVeryTightFakeRate     ;
+  Int_t   MuBDTLoPLoose              ;
+  Int_t   MuBDTLoPTight              ;
+  Int_t   MuSelector                 ;
+
+  Int_t   ENoCal                     ;
+  Int_t   EVeryLoose                 ;
+  Int_t   ELoose                     ;
+  Int_t   ETight                     ;
+  Int_t   EVeryTight                 ;
+  Int_t   PidLHElectrons             ;
+  Int_t   EKMSuperLoose              ;
+  Int_t   EKMVeryLoose               ;
+  Int_t   EKMLoose                   ;
+  Int_t   EKMTight                   ;
+  Int_t   EKMVeryTight               ;
+  Int_t   EKMSuperTight              ;
+  Int_t   ESelector                  ;
+
+  Int_t   KSMSNotAPion               ;
+  Int_t   KSMSVeryLoose              ;
+  Int_t   KSMSLoose                  ;
+  Int_t   KSMSTight                  ;
+  Int_t   KSMSVeryTight              ;
+  Int_t   KNNNotAPion                ;
+  Int_t   KNNVeryLoose               ;
+  Int_t   KNNLoose                   ;
+  Int_t   KNNTight                   ;
+  Int_t   KNNVeryTight               ;
+  Int_t   KLHNotAPion                ;
+  Int_t   KLHVeryLoose               ;
+  Int_t   KLHLoose                   ;
+  Int_t   KLHTight                   ;
+  Int_t   KLHVeryTight               ;
+  Int_t   KGLHNotAPion               ;
+  Int_t   KGLHVeryLoose              ;
+  Int_t   KGLHLoose                  ;
+  Int_t   KGLHTight                  ;
+  Int_t   KGLHVeryTight              ;
+  Int_t   KBDTNotAPion               ;
+  Int_t   KBDTVeryLoose              ;
+  Int_t   KBDTLoose                  ;
+  Int_t   KBDTTight                  ;
+  Int_t   KBDTVeryTight              ;
+  Int_t   KKMNotAPion                ;
+  Int_t   KKMVeryLoose               ;
+  Int_t   KKMLoose                   ;
+  Int_t   KKMTight                   ;
+  Int_t   KKMVeryTight               ;
+  Int_t   KSelector                  ;
+
+  Int_t   PiRoyLoose                 ;
+  Int_t   PiRoyNotAKaon              ;
+  Int_t   PiLHVeryLoose              ;
+  Int_t   PiLHLoose                  ;
+  Int_t   PiLHTight                  ;
+  Int_t   PiLHVeryTight              ;
+  Int_t   PiGLHVeryLoose             ;
+  Int_t   PiGLHLoose                 ;
+  Int_t   PiGLHTight                 ;
+  Int_t   PiGLHVeryTight             ;
+  Int_t   PiKMSuperLoose             ;
+  Int_t   PiKMVeryLoose              ;
+  Int_t   PiKMLoose                  ;
+  Int_t   PiKMTight                  ;
+  Int_t   PiKMVeryTight              ;
+  Int_t   PiKMSuperTight             ;
+  Int_t   PiSelector                 ;
+
+  Float_t extra1px                   ;
+  Float_t extra1py                   ;
+  Float_t extra1pz                   ;
+  Float_t extra1p3                   ;
+  Float_t extra2px                   ;
+  Float_t extra2py                   ;
+  Float_t extra2pz                   ;
+  Float_t extra2p3                   ;
+  Float_t extraMPiPi                 ;
+  Float_t extraMPiK                  ;
+  Float_t extraMKPi                  ;
+  Float_t extraMKK                   ;
+
+  Int_t   run                        ;
+  Int_t   SPMode                     ;
+  Int_t   signalMode                 ;
+  Float_t Ellp3Lab                   ;
+  Int_t   hits                       ;
+
+  Int_t   MuIdx                      ;
+  Int_t   EIdx                       ;
+  Int_t   PiIdx                      ;
+  Int_t   trackIdx                   ;
+
+ private:
+
+} ;
+  
+
+#endif
+

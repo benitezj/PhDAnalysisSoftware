@@ -1,0 +1,8 @@
+macro psportrait
+shell rm -f paw.ps
+fortran/file 66 paw.ps
+graphics/metafile -66 -111
+pic/plot ' '
+close 66
+shell prps paw.ps
+return

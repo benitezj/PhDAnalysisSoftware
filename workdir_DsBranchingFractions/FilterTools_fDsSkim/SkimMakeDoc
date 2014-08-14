@@ -1,0 +1,324 @@
+#!@PERL@
+########################################################################
+#
+# SkimMakeDoc
+# $Id: SkimMakeDoc,v 1.4 2007/10/17 09:29:02 marchior Exp $
+#
+# This script generates the skim documentation.
+# See SkimMakeDoc -h for help on the syntax
+#
+# It must be run from the workdir and needs a checked out version
+# of the FilterTools package.
+#
+# Author: Frank Winklmeier (fwinkl)
+#
+########################################################################
+
+
+use strict 'vars';
+#use warnings;
+use Getopt::Long;
+
+my $FTpath = "../FilterTools";
+my $docPath = "$FTpath/doc";
+my $skimDef = "defineMiniSkims.tcl";
+my $title = "Skim documentation";
+my $CVSweb = "http://babar-hn.slac.stanford.edu:5090/cgi-bin/internal/cvsweb.cgi";
+my $headerFile = "/afs/slac/g/babar/www/Physics/header.inc";
+
+my %opts = ();
+GetOptions(\%opts,
+	   'ftPath|f=s'  => \$FTpath,
+	   'skimDef|s=s' => \$skimDef,
+	   'title|t=s',  => \$title,
+	   'oldSyntax|y',
+	   'includeFrames|i',
+	   'help|h'
+	  );
+
+&usage(1) if ($Getopt::Long::error);
+&usage(0) if ($opts{'help'});
+
+
+########################################################################
+# usage
+#
+########################################################################
+sub usage {
+  my($exit, $message) = @_;
+
+  print STDERR $message if defined $message;
+  print STDERR <<INLINE_LITERAL_TEXT; #'
+Usage: SkimMakeDoc [OPTION]
+Create skim documentation web page.
+
+OPTION can be one or more of the following:    (default)
+  -f, --ftPath        path to FilterTools       (../FilterTools)
+  -s, --skimDef       skim definitions file     (defineMiniSkims.tcl)
+  -t, --title         title of the web page     (Skim documentation)
+  -y, --oldSyntax     use old syntax for definitions file
+  -i, --includeFrames add standard frames of BaBar web pages
+  -h, --help          help
+
+INLINE_LITERAL_TEXT
+#'
+  exit($exit) if defined $exit;
+}
+
+
+
+########################################################################
+#                             M A I N
+########################################################################
+
+# Do some checks first
+#
+die "Cannot find $FTpath\n" if not -e "$FTpath";
+die "Cannot find $docPath\n" if not -e "$docPath";
+
+
+# Read the CVS revision of the doc files
+#
+my %skimDoc = ();
+open (CVS,"$docPath/CVS/Entries") or die "Cannot open $docPath/CVS/Entries\n";
+while (<CVS>) {
+  my ($dummy,$doc,$rev,$rest) = split("/", $_, 4);
+  $skimDoc{$doc}{rev} = $rev;
+}
+close (CVS);
+
+# Read the CVS revision of all FilterTools files
+#
+my %FTrev = ();
+open (CVS,"$FTpath/CVS/Entries") or die "Cannot open $FTpath/CVS/Entries\n";
+while (<CVS>) {
+  my ($dummy,$file,$rev,$rest) = split("/", $_, 4);
+  $FTrev{$file}{rev} = $rev;
+}
+close (CVS);
+
+# Read the skim definitions file
+#
+my $skimsFile = "$FTpath/$skimDef";
+my %skims = ();
+open (FILE,$skimsFile) or die "Cannot open $skimsFile\n";
+while (<FILE>) {
+  next if m/#/;
+  chomp;
+  next if $_ eq "";
+
+  my ($dummy,$tag,$type,$typeMC,$def) = split(" ", $_, 5);
+  if (exists $opts{oldSyntax}) {
+    ($dummy,$dummy,$tag,$type,$typeMC,$def) = split(" ", $_, 6);
+  }
+  my ($awg,$skim) = split("/",$tag);
+  $skims{$skim}{awg} = $awg;
+  $skims{$skim}{type} = $type;
+  $skims{$skim}{typeMC} = $typeMC;
+  $skims{$skim}{def} = $def;
+  $skims{$skim}{doc} = findDoc($skim);
+  my $pathFile = $skim."Path.tcl";
+  if (-e "$FTpath/$pathFile") {
+    $skims{$skim}{tcl} = "$CVSweb/FilterTools/$pathFile?rev=$FTrev{$pathFile}{rev};content-type=text%2Fx-cvsweb-markup";
+  }
+  else { $skims{$skim}{tcl} = ""; }
+}
+close (FILE);
+
+# HTML output
+#
+my $docFile = $skimDef;
+$docFile =~ s/\.tcl/\.html/;      # default html file name
+
+# Sorted by skim name
+printSkims($docFile, 1);
+printSkims($docFile, 2);
+
+
+
+########################################################################
+# findDoc
+#
+# Find the documentation file to a skim
+#
+# Input:  $skim - skim name
+# Return: name of doc file ('' if not found)
+#
+########################################################################
+sub findDoc() {
+  my ($skim) = @_;
+
+  # Try the following possible file names
+  my @docFiles = ("$skim.readme",
+		  "$skim"."Path.readme",
+		  "$skim.html");
+
+  my $file = "";
+  $_ = "";
+  foreach my $doc (@docFiles) {
+    if (-e "$docPath/$doc") {
+      # Read the first non-empty line of the file
+      open (DOC, "$docPath/$doc") or die "Cannot open $docPath/$doc\n";
+      while (<DOC>) {
+	chomp;
+	next if $_ eq "";    # ignore empty lines
+	next if m/\$Id/;     # ignore CVS idtentifier
+	last;
+      }
+      close (DOC);
+      $file = $doc;
+      last;
+    }
+  }
+
+  # Check if the first line contains a reference to a different skim
+  #
+  my $skim = (m#<skim>(.*?)</skim>#);
+  if ($skim eq "") {
+    # Check for link to a web page
+    #
+    my $link = (m#<url>(.*?)</url>#);
+    if ($link eq "") {	
+      return "" if $file eq "";
+      my $type = 'text%2Fplain';
+      $type = 'text%2Fhtml' if ($file =~ m/\.html/);
+      if (exists $skimDoc{$file}) {
+	return "$CVSweb/FilterTools/doc/$file?rev=$skimDoc{$file}{rev};content-type=$type";
+      }
+      else {
+	print "Could not find $file in CVS repository. Did you commit?\n";
+	return "";
+      }
+    }
+    else { return $1; }
+  }
+  else { findDoc($1); }
+}
+
+########################################################################
+# printSkims
+#
+# Write the HTML documentation
+#
+# Input: $docFile  - output file base name (sort postfix will be added)
+#        $sort     - 1 = sort by skim, 2 = sort by awg
+#
+########################################################################
+sub printSkims() {
+
+  my ($docFile, $sort) = @_;
+
+  my $skimFile = $docFile;
+  my $awgFile = $docFile;
+  $awgFile =~ s/\.html/_awg\.html/;
+  $docFile = $awgFile if $sort == 2;
+
+  open (DOC,">$docFile") or die "Cannot open $docFile\n";
+  print "Writing $docFile\n";
+
+  # Header
+  print DOC '<!-- THIS PAGE WAS AUTOMATICALLY GENERATED BY FilterTools/SkimMakeDoc -->';
+  print DOC "\n\n\n";
+  print DOC '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">';
+  print DOC "<html><head><title>$title</title>";
+  print DOC '<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">';
+  print DOC "</head>\n<body>\n";
+  if (exists $opts{includeFrames}) {
+      open (HEADERFILE,$headerFile) or die "Cannot open $headerFile\n";
+      print DOC "<!--:WIT:StartHeader:-->\n";
+      while (<HEADERFILE>) {
+	  print DOC $_;
+      }
+      close (HEADERFILE);
+      print DOC "<!--:WIT:EndHeader:-->\n";
+  }
+
+  print DOC "<h1>$title</h1>";
+  print DOC '<a href="http://www.slac.stanford.edu/BFROOT/www/Physics/skims/skims.html">Skims homepage</a>';
+  
+  print DOC '<p>Color codings for output type:<br>';
+  my @types = ("deepCopyMicro","deepCopyMini","pointer","tagOnly","noOutput","other");
+  foreach my $t (@types) {
+      my $tcolor = typeColor($t);
+      print DOC '<span style="background-color:'.$tcolor.';color:'.$tcolor.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;'.$t.'<br>';
+  }
+  print DOC '</p>';
+  
+  # Main skim table
+  print DOC '<table border="0" cellspacing="0" cellpadding="4">';
+  print DOC "<tr>";
+  if ($sort == 1) {
+    print DOC '<td><b>Skim</b></td><td><b><a href="'.$awgFile.'">AWG</a></b></td>';
+  }
+  else {
+    print DOC '<td><b><a href="'.$skimFile.'">Skim</a></b></td><td><b>AWG</b></td>';
+  }
+  print DOC "<td><b>Data</b></td><td><b>MC</b></td><td></td></tr>\n";
+
+  my $row = 0;
+  my $color = "";
+  my $noDoc = 0;
+  my @skimList = ();
+  if ($sort == 1) { @skimList = sort keys %skims; }
+  else { @skimList = sort {$skims{$a}{awg}.$a cmp $skims{$b}{awg}.$b} keys %skims; }
+
+  foreach my $skim (@skimList) {
+
+    if ($row%2==0) {
+      $color = 'bgcolor="#FFFF77"';
+    }
+    else { $color = ""; }
+    print DOC "<tr $color>";
+    if (not $skims{$skim}{doc} eq '') {
+      print DOC '<td><a href="'.$skims{$skim}{doc}.'">'.$skim.'</a></td>';
+    }
+    else { 
+      print DOC "<td>$skim</td>";
+      $noDoc++;
+    }
+    print DOC "<td>$skims{$skim}{awg}</td>";
+
+    # Data and MC output type
+    my $tcolor = typeColor($skims{$skim}{type});
+    print DOC '<td><span style="background-color:'.$tcolor.';color:'.$tcolor.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>';
+    $tcolor = typeColor($skims{$skim}{typeMC});
+print DOC '<td><span style="background-color:'.$tcolor.';color:'.$tcolor.'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>';
+
+    # source
+    if (not $skims{$skim}{tcl} eq '') {
+      print DOC '<td><a href="'.$skims{$skim}{tcl}.'">.tcl</a></td>';
+    }
+    else { print DOC "<td></td>"; }
+
+    print DOC "</tr>\n";
+    $row++;
+  }
+  print DOC '</table>';
+
+  # Footer
+  print DOC "<br><b>".keys(%skims)." skims in total</b>";
+  print DOC "<br><b>$noDoc skims without documentation</b><br>";
+
+  print DOC '<br><i>Generated by SkimMakeDoc on '.gmtime()."</i>";
+  print DOC '<br><i>from <a href="'."$CVSweb/FilterTools/$skimDef?rev=$FTrev{$skimDef}{rev};content-type=text%2Fx-cvsweb-markup".'"'.">FilterTools/$skimDef</a></i>\n";
+  if (exists $opts{includeFrames}) {
+      print DOC "<!--:WIT:StartEndHeaderTable:-->\n";
+      print DOC "</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n";
+      print DOC "<!--:WIT:FinishEndHeaderTable:-->\n";
+  }
+  print DOC "</body></html>\n";
+
+  close (DOC);
+}
+
+
+sub typeColor() {
+  my ($type) = @_;
+
+  if ($type eq "deepCopyMicro") { return "#000077"; }
+  elsif ($type eq "deepCopyMini") { return "#0000FF";}
+  elsif ($type eq "pointer") { return "#00AAFF";}
+  elsif ($type eq "tagOnly") { return "#99FF33";}
+  elsif ($type eq "noOutput") { return "#CCCCCC";}
+  else { return "#FF00FF"; }
+}

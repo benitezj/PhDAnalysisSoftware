@@ -1,0 +1,66 @@
+$Id: History,v 1.6 2006/10/06 16:55:26 desilva Exp $
+
+ads04Oct06
+  Removed #include FwkStrings in 2 header files.  
+
+V00-02-06
+  Add a flag checkClones so one can choose to dump every candidate even
+  if they are clones of each other (although they are clones, some parameters
+  can be different.)
+
+V00-02-05
+  Flatten the mcList
+
+V00-02-01
+  Add executable
+V00-02-00
+  Framework APP* to App* migration (from V00-01-04)
+
+V00-01-05 
+  Add executable 
+
+V00-01-04
+  Move from BtaUsrTupleUtil V00-01-04
+
+
+
+ ==== below are BtaUsrTupleUtil history ================
+V00-01-03
+- add () etc, to make compiler (release 15.5.0) not give warnings.
+
+V00-01-02
+- Turns out it doesn't need iostream anyway. Remove #include <iostream>,
+  using std::cout;   , etc. Should be still compatible with pre-iostream
+  releases.
+
+V00-01-01
+- Rename "PidMap" to "BitMap"; it deals with any bitmap associated with 
+  charged tracks, including "TracksMap", which contains track quality such as 
+  "GoodTracksLoose", etc.
+- BtuCandBlock:  add POCA info.
+                 add PIDWeight  (needs BetaPid V00-01-88, CdbBdb V00-08-02
+                                 and EffTable V00-00-08, or better)
+
+V00-01-00
+- iostream migration
+
+V00-00-05  (chcheng, 2004-07-27)
+- correct History file
+
+V00-00-04  (chcheng, 2004-07-27)
+- BtuTupleMaker:  add "clone" method
+                  add "ntupleName" command to specify ntuple name
+                  add "writeEveryEvent" command to control whether or not
+                      to write out events with no candidates. Default is true.
+- BtuCandBlock: add "Doca" and "DocaXY"
+- BtuGamContentEMC: add E_raw, A42 and nCrystals.
+
+V00-00-03  (chcheng, 2004-07-19)
+- allow a composite candidate to have a daughter with the same type 
+  (e.g., brem-recovered e -> e gamma).
+- user have to specify which block to link to TRK block. 
+
+V00-00-02  (chcheng, 2004-07-14)
+
+V00-00-01  (chcheng, 2004-07-14)
+- first official tag

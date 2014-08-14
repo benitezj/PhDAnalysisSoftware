@@ -1,0 +1,309 @@
+#ifndef DRecoDsToKKsAnalysis_hh
+#define DRecoDsToKKsAnalysis_hh
+#define NMAXDS 200
+#define NMAXUPS 200
+
+// Get inherited headers
+#include "DRecoTagAnalysis.hh"
+#include "DRecoDsInclusiveAnalysis.hh"
+
+class DRecoDsToKKsAnalysis:public DRecoDsInclusiveAnalysis
+{
+  ClassDef(DRecoDsToKKsAnalysis, 1) ;
+
+ public:
+  DRecoDsToKKsAnalysis(Int_t MCorDATA, TString OutputDir, Int_t theSPMode, Int_t theRun) ;
+  ~DRecoDsToKKsAnalysis() ;
+  
+  Int_t ReduceNtuple() ;
+  void SetDsToKKsReduceCuts()
+  {
+  }
+  
+ protected:
+
+  void  FillDsToKKsVars() ;
+  Int_t SetDsToKKsBranches() ;
+  Int_t MakeDsToKKsReducedNtupleBranches() ;
+  Int_t SetDsToKKsReducedNtupleBranches() ;
+ 
+  Bool_t DsToKKsPassesCuts() ;
+  
+  // Declaration of input leave types
+  Float_t    ProbChi2MMCFit_in[MAXNCANDS] ;
+  Float_t  ProbChi2ListUFit_in[MAXNCANDS] ;
+  Float_t  ProbChi2ListCFit_in[MAXNCANDS] ;
+  Float_t  EvtEExtraNeutral_in[MAXNCANDS] ;
+
+  Int_t        KsVtxStatus_in[NMAXKS] ;
+  Int_t      FitStatusCFit_in[MAXNCANDS] ;
+  Int_t      FitStatusUFit_in[MAXNCANDS] ;
+
+  Float_t      KpxMMRaw_in[MAXNCANDS] ;
+  Float_t      KpyMMRaw_in[MAXNCANDS] ;
+  Float_t      KpzMMRaw_in[MAXNCANDS] ;
+  Float_t  KenergyMMRaw_in[MAXNCANDS] ;
+  Float_t       KspxMMRaw_in[MAXNCANDS] ;
+  Float_t       KspyMMRaw_in[MAXNCANDS] ;
+  Float_t       KspzMMRaw_in[MAXNCANDS] ;
+  Float_t   KsenergyMMRaw_in[MAXNCANDS] ;
+  Float_t       DspxMMRaw_in[MAXNCANDS] ;
+  Float_t       DspyMMRaw_in[MAXNCANDS] ;
+  Float_t       DspzMMRaw_in[MAXNCANDS] ;
+  Float_t   DsenergyMMRaw_in[MAXNCANDS] ;
+  Float_t     DsmassMMRaw_in[MAXNCANDS] ;
+
+
+  Float_t      KpxMMCFit_in[MAXNCANDS] ;
+  Float_t      KpyMMCFit_in[MAXNCANDS] ;
+  Float_t      KpzMMCFit_in[MAXNCANDS] ;
+  Float_t  KenergyMMCFit_in[MAXNCANDS] ;
+  Float_t       KspxMMCFit_in[MAXNCANDS] ;
+  Float_t       KspyMMCFit_in[MAXNCANDS] ;
+  Float_t       KspzMMCFit_in[MAXNCANDS] ;
+  Float_t   KsenergyMMCFit_in[MAXNCANDS] ;
+  Float_t       DspxMMCFit_in[MAXNCANDS] ;
+  Float_t       DspyMMCFit_in[MAXNCANDS] ;
+  Float_t       DspzMMCFit_in[MAXNCANDS] ;
+  Float_t   DsenergyMMCFit_in[MAXNCANDS] ;
+
+
+
+  Float_t       KspxListRaw_in[MAXNCANDS] ;
+  Float_t       KspyListRaw_in[MAXNCANDS] ;
+  Float_t       KspzListRaw_in[MAXNCANDS] ;
+  Float_t   KsenergyListRaw_in[MAXNCANDS] ;
+  Float_t     Ksd1pxListRaw_in[MAXNCANDS] ;
+  Float_t     Ksd1pyListRaw_in[MAXNCANDS] ;
+  Float_t     Ksd1pzListRaw_in[MAXNCANDS] ;
+  Float_t Ksd1energyListRaw_in[MAXNCANDS] ;		    
+  Float_t     Ksd2pxListRaw_in[MAXNCANDS] ;
+  Float_t     Ksd2pyListRaw_in[MAXNCANDS] ;
+  Float_t     Ksd2pzListRaw_in[MAXNCANDS] ;
+  Float_t Ksd2energyListRaw_in[MAXNCANDS] ; 
+  Float_t       DspxListRaw_in[MAXNCANDS] ;
+  Float_t       DspyListRaw_in[MAXNCANDS] ;
+  Float_t       DspzListRaw_in[MAXNCANDS] ;
+  Float_t   DsenergyListRaw_in[MAXNCANDS] ;
+  Float_t      KpxListRaw_in[MAXNCANDS] ;
+  Float_t      KpyListRaw_in[MAXNCANDS] ;
+  Float_t      KpzListRaw_in[MAXNCANDS] ;
+  Float_t  KenergyListRaw_in[MAXNCANDS] ;
+
+
+  Float_t       KspxListUFit_in[MAXNCANDS] ;
+  Float_t       KspyListUFit_in[MAXNCANDS] ;
+  Float_t       KspzListUFit_in[MAXNCANDS] ;
+  Float_t   KsenergyListUFit_in[MAXNCANDS] ;
+  Float_t     Ksd1pxListUFit_in[MAXNCANDS] ;
+  Float_t     Ksd1pyListUFit_in[MAXNCANDS] ;
+  Float_t     Ksd1pzListUFit_in[MAXNCANDS] ;
+  Float_t Ksd1energyListUFit_in[MAXNCANDS] ;		    
+  Float_t     Ksd2pxListUFit_in[MAXNCANDS] ;
+  Float_t     Ksd2pyListUFit_in[MAXNCANDS] ;
+  Float_t     Ksd2pzListUFit_in[MAXNCANDS] ;
+  Float_t Ksd2energyListUFit_in[MAXNCANDS] ; 
+  Float_t       DspxListUFit_in[MAXNCANDS] ;
+  Float_t       DspyListUFit_in[MAXNCANDS] ;
+  Float_t       DspzListUFit_in[MAXNCANDS] ;
+  Float_t   DsenergyListUFit_in[MAXNCANDS] ;
+  Float_t      KpxListUFit_in[MAXNCANDS] ;
+  Float_t      KpyListUFit_in[MAXNCANDS] ;
+  Float_t      KpzListUFit_in[MAXNCANDS] ;
+  Float_t  KenergyListUFit_in[MAXNCANDS] ;
+
+  Float_t       KspxListCFit_in[MAXNCANDS] ;
+  Float_t       KspyListCFit_in[MAXNCANDS] ;
+  Float_t       KspzListCFit_in[MAXNCANDS] ;
+  Float_t   KsenergyListCFit_in[MAXNCANDS] ;
+  Float_t     Ksd1pxListCFit_in[MAXNCANDS] ;
+  Float_t     Ksd1pyListCFit_in[MAXNCANDS] ;
+  Float_t     Ksd1pzListCFit_in[MAXNCANDS] ;
+  Float_t Ksd1energyListCFit_in[MAXNCANDS] ;		    
+  Float_t     Ksd2pxListCFit_in[MAXNCANDS] ;
+  Float_t     Ksd2pyListCFit_in[MAXNCANDS] ;
+  Float_t     Ksd2pzListCFit_in[MAXNCANDS] ;
+  Float_t Ksd2energyListCFit_in[MAXNCANDS] ; 
+  Float_t       DspxListCFit_in[MAXNCANDS] ;
+  Float_t       DspyListCFit_in[MAXNCANDS] ;
+  Float_t       DspzListCFit_in[MAXNCANDS] ;
+  Float_t   DsenergyListCFit_in[MAXNCANDS] ;
+  Float_t      KpxListCFit_in[MAXNCANDS] ;
+  Float_t      KpyListCFit_in[MAXNCANDS] ;
+  Float_t      KpzListCFit_in[MAXNCANDS] ;
+  Float_t  KenergyListCFit_in[MAXNCANDS] ;
+
+
+
+
+//    Int_t          Dsd1Idx[MAXNCANDS] ;
+//    Int_t         Dsd1Lund[MAXNCANDS] ;
+//    Int_t          Dsd2Idx[MAXNCANDS] ;
+//    Int_t         Dsd2Lund[MAXNCANDS] ;
+
+  // Declaration of output leaf types
+
+   Int_t KSMSNotAPion ;
+   Int_t KSMSVeryLoose;
+   Int_t KSMSLoose    ;
+   Int_t KSMSTight    ;
+   Int_t KSMSVeryTight;
+   Int_t KNNNotAPion  ;
+   Int_t KNNVeryLoose ;
+   Int_t KNNLoose     ;
+   Int_t KNNTight     ;
+   Int_t KNNVeryTight ;
+   Int_t KLHNotAPion  ;
+   Int_t KLHVeryLoose ;
+   Int_t KLHLoose     ;
+   Int_t KLHTight     ;
+   Int_t KLHVeryTight ;
+   Int_t KGLHNotAPion ;
+   Int_t KGLHVeryLoose;
+   Int_t KGLHLoose    ;
+   Int_t KGLHTight    ;
+   Int_t KGLHVeryTight;
+   Int_t KBDTNotAPion ;
+   Int_t KBDTVeryLoose;
+   Int_t KBDTLoose    ;
+   Int_t KBDTTight    ;
+   Int_t KBDTVeryTight;
+   Int_t KKMNotAPion  ;
+   Int_t KKMVeryLoose ;
+   Int_t KKMLoose     ;
+   Int_t KKMTight     ;
+   Int_t KKMVeryTight ; 
+
+  Int_t KsVtxStatus ;
+  Int_t EvtFitStatusCFit ;
+  Int_t EvtFitStatusUFit ;
+
+
+  Float_t EvtProbChi2MMCFit ;
+  Float_t EvtProbChi2ListUFit ;
+  Float_t EvtProbChi2ListCFit ;
+  Float_t EExtra ; 
+
+  Float_t KpxMMRaw ;
+  Float_t KpyMMRaw ;
+  Float_t KpzMMRaw ;
+  Float_t KenergyMMRaw ;
+  Float_t KspxMMRaw ;
+  Float_t KspyMMRaw ;
+  Float_t KspzMMRaw ;
+  Float_t KsenergyMMRaw ;
+  Float_t KsmassMMRaw2 ;
+  Float_t DspxMMRaw ;
+  Float_t DspyMMRaw ;
+  Float_t DspzMMRaw ;
+  Float_t DsenergyMMRaw ;
+  Float_t DsmassMMRaw ;
+
+  Float_t KpxMMCFit ;
+  Float_t KpyMMCFit ;
+  Float_t KpzMMCFit ;
+  Float_t KenergyMMCFit ;
+  Float_t KspxMMCFit ;
+  Float_t KspyMMCFit ;
+  Float_t KspzMMCFit ;
+  Float_t KsenergyMMCFit ;
+  Float_t KsmassMMCFit2 ;
+  Float_t DspxMMCFit ;
+  Float_t DspyMMCFit ;
+  Float_t DspzMMCFit ;
+  Float_t DsenergyMMCFit ;
+  Float_t DsmassMMCFit2 ;
+
+
+  Float_t KspxListRaw ;
+  Float_t KspyListRaw ;
+  Float_t KspzListRaw ;
+  Float_t KsenergyListRaw ;
+  Float_t KsmassListRaw2 ;
+  Float_t Ksd1pxListRaw ;
+  Float_t Ksd1pyListRaw ;
+  Float_t Ksd1pzListRaw ;
+  Float_t Ksd1energyListRaw ;
+  Float_t Ksd2pxListRaw ;
+  Float_t Ksd2pyListRaw ;
+  Float_t Ksd2pzListRaw ;
+  Float_t Ksd2energyListRaw ;
+  Float_t KpxListRaw ;
+  Float_t KpyListRaw ;
+  Float_t KpzListRaw ;
+  Float_t KenergyListRaw ;
+  Float_t DspxListRaw ;
+  Float_t DspyListRaw ;
+  Float_t DspzListRaw ;
+  Float_t DsenergyListRaw ;
+  Float_t DsmassListRaw2 ;
+
+  Float_t KspxListUFit ;
+  Float_t KspyListUFit ;
+  Float_t KspzListUFit ;
+  Float_t KsenergyListUFit ;
+  Float_t KsmassListUFit2 ;
+  Float_t Ksd1pxListUFit ;
+  Float_t Ksd1pyListUFit ;
+  Float_t Ksd1pzListUFit ;
+  Float_t Ksd1energyListUFit ;
+  Float_t Ksd2pxListUFit ;
+  Float_t Ksd2pyListUFit ;
+  Float_t Ksd2pzListUFit ;
+  Float_t Ksd2energyListUFit ;
+  Float_t KpxListUFit ;
+  Float_t KpyListUFit ;
+  Float_t KpzListUFit ;
+  Float_t KenergyListUFit ;
+  Float_t DspxListUFit ;
+  Float_t DspyListUFit ;
+  Float_t DspzListUFit ;
+  Float_t DsenergyListUFit ;
+  Float_t DsmassListUFit2 ;
+
+  Float_t KspxListCFit ;
+  Float_t KspyListCFit ;
+  Float_t KspzListCFit ;
+  Float_t KsenergyListCFit ;
+  Float_t KsmassListCFit2 ;
+  Float_t Ksd1pxListCFit ;
+  Float_t Ksd1pyListCFit ;
+  Float_t Ksd1pzListCFit ;
+  Float_t Ksd1energyListCFit ;
+  Float_t Ksd2pxListCFit ;
+  Float_t Ksd2pyListCFit ;
+  Float_t Ksd2pzListCFit ;
+  Float_t Ksd2energyListCFit ;
+  Float_t KpxListCFit ;
+  Float_t KpyListCFit ;
+  Float_t KpzListCFit ;
+  Float_t KenergyListCFit ;
+  Float_t DspxListCFit ;
+  Float_t DspyListCFit ;
+  Float_t DspzListCFit ;
+  Float_t DsenergyListCFit ;
+  Float_t DsmassListCFit2 ;
+
+
+  Int_t   kselectorsmap ;				 
+  Int_t   truemothlund ;
+  Int_t   truemothndaus ;
+  Int_t   candkslund ;
+  Int_t   candklund ;
+  Int_t   truegrandmothidx;
+  Int_t   truegrandmothlund;  
+  Int_t   truemothidx ;
+  Int_t   truedauidx ;
+  Int_t   truesib1lund ;
+  Int_t   truesib2lund ;
+  Int_t   truesib3lund ;
+  Int_t   truesib4lund ;
+  Int_t   truesib5lund ;
+
+ private:
+
+} ;
+  
+
+#endif
+

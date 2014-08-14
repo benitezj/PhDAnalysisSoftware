@@ -1,0 +1,96 @@
+
+ SP3046 Run1 OffPeak     Grand Total= 2448   total good files= 2
+ SP3046 Run1 OnPeak     Grand Total= 19600   total good files= 10
+ SP3047 Run1 OffPeak     Grand Total= 2520   total good files= 2
+ SP3047 Run1 OnPeak     Grand Total= 19185   total good files= 10
+ SP3046 Run2 OffPeak     Grand Total= 6871   total good files= 4
+ SP3046 Run2 OnPeak     Grand Total= 55993   total good files= 29
+ SP3047 Run2 OffPeak     Grand Total= 6737   total good files= 4
+ SP3047 Run2 OnPeak     Grand Total= 55786   total good files= 29
+ SP3046 Run3 OffPeak     Grand Total= 2389   total good files= 2
+ SP3046 Run3 OnPeak     Grand Total= 29212   total good files= 17
+ SP3047 Run3 OffPeak     Grand Total= 2510   total good files= 2
+SP3047 Run3 OnPeak     Grand Total= 32945   total good files= 17  -->-300
+ SP3046 Run4 OffPeak     Grand Total= 7945   total good files= 5
+ SP3046 Run4 OnPeak     Grand Total= 98755   total good files= 51
+ SP3047 Run4 OffPeak     Grand Total= 7785   total good files= 5
+ SP3047 Run4 OnPeak     Grand Total= 98700   total good files= 51
+ SP3046 Run5 OffPeak     Grand Total= 13915   total good files= 8
+ SP3046 Run5 OnPeak     Grand Total= 127279   total good files= 67
+ SP3047 Run5 OffPeak     Grand Total= 13922   total good files= 8
+ SP3047 Run5 OnPeak     Grand Total= 126546   total good files= 67
+ SP3046 Run6 OffPeak     Grand Total= 7644   total good files= 4
+ SP3046 Run6 OnPeak     Grand Total= 74985   total good files= 40
+ SP3047 Run6 OffPeak     Grand Total= 7419   total good files= 4
+ SP3047 Run6 OnPeak     Grand Total= 74344   total good files= 40
+ SP3046 RunY2S OffPeak     Grand Total= 3111   total good files= 2
+ SP3046 RunY2S OnPeak     Grand Total= 22432   total good files= 13
+ SP3047 RunY2S OffPeak     Grand Total= 4215   total good files= 3
+ SP3047 RunY2S OnPeak     Grand Total= 28664   total good files= 16
+ SP3046 RunY3S OffPeak     Grand Total= 3213   total good files= 2
+ SP3046 RunY3S OnPeak     Grand Total= 33760   total good files= 19
+ SP3047 RunY3S OffPeak     Grand Total= 2601   total good files= 2
+ SP3047 RunY3S OnPeak     Grand Total= 28280   total good files= 16
+
+missing <1e-3
+
+ -----ccbar
+ SP1005 Run1 OffPeak     Grand Total= 473636   total good files= 47
+ SP1005 Run1 OnPeak     Grand Total= 4681765   total good files= 369
+ SP1005 Run2 OffPeak     Grand Total= 1448986   total good files= 147  -20012
+ SP1005 Run2 OnPeak     Grand Total= 13763770   total good files= 1099 -113677
+ SP1005 Run3 OffPeak     Grand Total= 538593   total good files= 53 -14537
+ SP1005 Run3 OnPeak     Grand Total= 7379995   total good files= 585 -124499
+ SP1005 Run4 OffPeak     Grand Total= 1766974   total good files= 178 
+ SP1005 Run4 OnPeak     Grand Total= 22211941   total good files= 1776 -72563
+ SP1005 Run5 OffPeak     Grand Total= 3062956   total good files= 316
+ SP1005 Run5 OnPeak     Grand Total= 28030924   total good files= 2298 -12222
+ SP1005 Run6 OffPeak     Grand Total= 1669509   total good files= 172
+ SP1005 Run6 OnPeak     Grand Total= 16957916   total good files= 1392
+ SP1005 RunY2S OffPeak     Grand Total= 287994   total good files= 26
+ SP1005 RunY2S OnPeak     Grand Total= 2801459   total good files= 252
+ SP1005 RunY3S OffPeak     Grand Total= 775216   total good files= 66
+ SP1005 RunY3S OnPeak     Grand Total= 7006714   total good files= 591
+
+Total missing 357510/113215858=3.1e-03
+
+
+
+-----------------------------------------------
+#number of final reconstructions
+SP3046 Run1 OnPeak     Grand Total= 3300   total good files= 10
+ SP3046 Run1 OffPeak     Grand Total= 438   total good files= 2
+ SP3046 Run2 OnPeak     Grand Total= 10247   total good files= 29
+ SP3046 Run2 OffPeak     Grand Total= 1355   total good files= 4
+ SP3046 Run3 OnPeak     Grand Total= 5577   total good files= 17
+ SP3046 Run3 OffPeak     Grand Total= 466   total good files= 2
+ SP3046 Run4 OnPeak     Grand Total= 17309   total good files= 51 -434
+ SP3046 Run4 OffPeak     Grand Total= 1977   total good files= 5 -615
+ SP3046 Run5 OnPeak     Grand Total= 22468   total good files= 67 -15
+ SP3046 Run5 OffPeak     Grand Total= 2426   total good files= 8 
+ SP3046 Run6 OnPeak     Grand Total= 12679   total good files= 40 
+ SP3046 Run6 OffPeak     Grand Total= 1380   total good files= 4 
+ SP3046 RunY2S OnPeak     Grand Total= 4388   total good files= 13 
+ SP3046 RunY2S OffPeak     Grand Total= 721   total good files= 2 
+ SP3046 RunY3S OnPeak     Grand Total= 6676   total good files= 19 
+ SP3046 RunY3S OffPeak     Grand Total= 562   total good files= 2 
+94000
+
+ SP3047 Run1 OnPeak     Grand Total= 3603   total good files= 10 
+ SP3047 Run1 OffPeak     Grand Total= 540   total good files= 2
+ SP3047 Run2 OnPeak     Grand Total= 10357   total good files= 29 
+ SP3047 Run2 OffPeak     Grand Total= 1285   total good files= 4 
+ SP3047 Run3 OnPeak     Grand Total= 6266   total good files= 17 -380
+ SP3047 Run3 OffPeak     Grand Total= 418   total good files= 2 
+ SP3047 Run4 OnPeak     Grand Total= 17509   total good files= 51 -725
+ SP3047 Run4 OffPeak     Grand Total= 1447   total good files= 5 
+ SP3047 Run5 OnPeak     Grand Total= 21726   total good files= 67 
+ SP3047 Run5 OffPeak     Grand Total= 2483   total good files= 8 
+ SP3047 Run6 OnPeak     Grand Total= 12509   total good files= 40 
+ SP3047 Run6 OffPeak     Grand Total= 1367   total good files= 4 
+ SP3047 RunY2S OnPeak     Grand Total= 5797   total good files= 16 
+ SP3047 RunY2S OffPeak     Grand Total= 953   total good files= 3 
+ SP3047 RunY3S OnPeak     Grand Total= 5701   total good files= 16 
+ SP3047 RunY3S OffPeak     Grand Total= 457   total good files= 2
+ 90000
+Total missing  2170/184000 ~

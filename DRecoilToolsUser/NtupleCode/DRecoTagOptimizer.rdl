@@ -1,0 +1,116 @@
+/*****************************************************************************
+ * Project: RooFit                                                           *
+ * Package: RooFitCore                                                       *
+ *    File: $Id: DRecoTagOptimizer.rdl,v 1.6 2010/06/07 18:31:59 benitezj Exp $
+ * Authors:                                                                  *
+ *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
+ *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
+ *                                                                           *
+ * Copyright (c) 2000-2005, Regents of the University of California          *
+ *                          and Stanford University. All rights reserved.    *
+ *                                                                           *
+ * Redistribution and use in source and binary forms,                        *
+ * with or without modification, are permitted according to the terms        *
+ * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
+ *****************************************************************************/
+
+
+
+#ifndef ROO_TagOptimizer
+#define ROO_TagOptimizer
+
+#include "RooAbsOptTestStatistic.h"
+#include "RooCmdArg.h"
+#include "RooDataHist.h"
+
+class DRecoTagOptimizer : public RooAbsOptTestStatistic {
+public:
+
+  // Constructors, assignment etc
+  DRecoTagOptimizer(const char *name, const char* title, RooAbsPdf& pdf, RooDataHist& data,
+		    TTree* TreeSig,TTree* TreeBkg,RooArgList* Cuts,
+	     const RooCmdArg& arg1                , const RooCmdArg& arg2=RooCmdArg::none(),const RooCmdArg& arg3=RooCmdArg::none(),
+	     const RooCmdArg& arg4=RooCmdArg::none(), const RooCmdArg& arg5=RooCmdArg::none(),const RooCmdArg& arg6=RooCmdArg::none(),
+	     const RooCmdArg& arg7=RooCmdArg::none(), const RooCmdArg& arg8=RooCmdArg::none(),const RooCmdArg& arg9=RooCmdArg::none()) ;
+
+  DRecoTagOptimizer(const char *name, const char *title, RooAbsPdf& pdf, RooDataHist& data,
+		    TTree* TreeSig,TTree* TreeBkg,RooArgList* Cuts,
+		    Bool_t extended=kFALSE, const char* rangeName=0, const char* addCoefRangeName=0, 
+		    Int_t nCPU=1, Bool_t verbose=kTRUE, Bool_t splitCutRange=kTRUE) ;
+
+  DRecoTagOptimizer(const char *name, const char *title, RooAbsReal& pdf, RooDataHist& data,
+		    TTree* TreeSig,TTree* TreeBkg,RooArgList* Cuts,
+		    const RooArgSet& projDeps, Bool_t extended=kFALSE, const char* rangeName=0, const char* addCoefRangeName=0, 
+		    Int_t nCPU=1, Bool_t verbose=kTRUE, Bool_t splitCutRange=kTRUE) ;
+
+  DRecoTagOptimizer(const DRecoTagOptimizer& other, const char* name=0);
+  virtual TObject* clone(const char* newname) const { return new DRecoTagOptimizer(*this,newname); }
+
+  //RHEL3
+//  virtual RooAbsTestStatistic* create(const char *name, const char *title, RooAbsPdf& pdf, RooAbsData& data,
+//				      const RooArgSet& projDeps, const char* rangeName=0, const char* addCoefRangeName=0,
+//				      Int_t nCPU=1, Bool_t verbose=kTRUE, Bool_t splitCutRange=kTRUE) {
+//    //return new DRecoTagOptimizer(name,title,pdf,(RooDataHist&)data,projDeps,_extended,rangeName,addCoefRangeName,nCPU, verbose, splitCutRange) ;
+//    return new DRecoTagOptimizer(name,title,pdf,(RooDataHist&)data,0,0,0,projDeps,_extended,rangeName,addCoefRangeName,nCPU, verbose, splitCutRange) ;
+//  }
+
+  ///for RHEL5
+  virtual RooAbsTestStatistic* create(const char *name, const char *title, RooAbsReal& real, RooAbsData& data,
+				      const RooArgSet& projDeps, const char* rangeName=0, const char* addCoefRangeName=0, 
+				      Int_t nCPU=1, Bool_t interleave=kFALSE, Bool_t verbose=kTRUE, Bool_t splitCutRange=kFALSE){
+    interleave=0;//dont know what this is for.
+    return new DRecoTagOptimizer(name,title,real,(RooDataHist&)data,
+				 0,0,0,
+				 projDeps,_extended,rangeName,addCoefRangeName,
+				 nCPU, verbose, splitCutRange) ;
+  }
+
+
+  
+  virtual ~DRecoTagOptimizer();
+
+  virtual Double_t defaultErrorLevel() const { return 1.0 ; }
+
+
+  void SetMinSideBandLimit(Float_t min){minSideBandLimit=min;}
+  void SetSigType(Int_t type){
+    if(type==1||type==2||type==3){
+      sigtype=type;
+      sig0=0.;
+      sig0=evaluatePartition(1,1,1);//reset normalization
+    }
+  }
+  TGraph* ScanVariable(RooRealVar* Var);
+  Double_t GetSignificance(){return 1000.*sig0/evaluatePartition(1,1,1);}
+  Double_t GetPurity(){
+    Int_t origtype=sigtype;    //switch the type to purity
+    SetSigType(3);
+    Float_t purity=1000.*sig0/evaluatePartition(1,1,1);    //evaluate purity
+    SetSigType(origtype);//switch back
+    return purity;
+  }
+
+
+protected:
+
+  static RooArgSet _emptySet ; // Supports named argument constructor
+
+  RooDataHist::ErrorType _etype ;
+  Bool_t _extended ;
+
+  Int_t sigtype;
+  TTree* treesig;
+  TTree* treebkg;
+  RooArgList* cutlist;
+  Double_t sig0;
+  Float_t minSideBandLimit;
+
+
+  //virtual Double_t evaluatePartition(Int_t firstEvent, Int_t lastEvent) const ;
+  virtual Double_t evaluatePartition(Int_t firstEvent, Int_t lastEvent, Int_t stepSize) const ;
+  
+  ClassDef(DRecoTagOptimizer,1) // Abstract real-valued variable
+};
+
+
+#endif

@@ -1,0 +1,11 @@
+#ifndef TreeChain_hh
+#define TreeChain_hh
+
+#include "TROOT.h"
+#include "TChain.h"
+#include "TString.h"
+
+void TreeChain(TChain* chain,Int_t firstfile, Int_t lastfile,TString NtupleName);
+
+
+#endif

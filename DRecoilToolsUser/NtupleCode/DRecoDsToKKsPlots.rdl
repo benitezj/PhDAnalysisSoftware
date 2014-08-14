@@ -1,0 +1,31 @@
+#ifndef DRecoDsToKKsPlots_hh
+#define DRecoDsToKKsPlots_hh
+#include "TH1F.h"
+
+class DRecoDsToKKsPlots
+{
+  ClassDef(DRecoDsToKKsPlots, 1) ;
+
+ public:
+  DRecoDsToKKsPlots() ;
+  ~DRecoDsToKKsPlots() ;
+
+  void backgroundID() ;
+  void Roofit() ;
+  void Dist_Roofit() ;
+  void Signal_Roofit() ;
+  void EExtra_Plots(Int_t, Float_t, Float_t) ;
+  void EExtraNXT() ;
+  void Sig_Yields() ;
+  TH1F* EExtra_Diff(TH1F*, TH1F*) ;
+  void FindTrueDecays(Float_t , Float_t) ;
+  void LogPlots() ;
+  void KsMassStudy() ;
+
+  //protected:
+  //private:
+} ;
+  
+
+#endif
+

@@ -1,0 +1,114 @@
+/*****************************************************************************
+ * Project: RooFit                                                           *
+ * Package: RooFitCore                                                       *
+ *    File: $Id: DRecoSimulChi2Var.rdl,v 1.3 2010/06/07 18:31:59 benitezj Exp $
+ * Authors:                                                                  *
+ *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
+ *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
+ *                                                                           *
+ * Copyright (c) 2000-2005, Regents of the University of California          *
+ *                          and Stanford University. All rights reserved.    *
+ *                                                                           *
+ * Redistribution and use in source and binary forms,                        *
+ * with or without modification, are permitted according to the terms        *
+ * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
+ *****************************************************************************/
+
+#ifndef DReco_SimulCHI2_VAR
+#define DReco_SimulCHI2_VAR
+
+#include "RooAbsOptTestStatistic.h"
+#include "RooCmdArg.h"
+#include "RooDataHist.h"
+#include "RooAbsPdf.h"
+#include "RooRealVar.h"
+#include "TGraph.h"
+#include "TH2F.h"
+
+class  DRecoSimulChi2Var : public RooAbsOptTestStatistic {
+public:
+
+  // Constructors, assignment etc
+  DRecoSimulChi2Var(const char *name, const char* title, RooAbsPdf& pdf, RooDataHist& data,
+	     TList* Hists,TList* Pdfs,TList* Vars,
+	     const RooCmdArg& arg1                , const RooCmdArg& arg2=RooCmdArg::none(),const RooCmdArg& arg3=RooCmdArg::none(),
+	     const RooCmdArg& arg4=RooCmdArg::none(), const RooCmdArg& arg5=RooCmdArg::none(),const RooCmdArg& arg6=RooCmdArg::none(),
+	     const RooCmdArg& arg7=RooCmdArg::none(), const RooCmdArg& arg8=RooCmdArg::none(),const RooCmdArg& arg9=RooCmdArg::none()) ;
+
+  DRecoSimulChi2Var(const char *name, const char *title, RooAbsPdf& pdf, RooDataHist& data,
+	    Bool_t extended=kFALSE, const char* rangeName=0, const char* addCoefRangeName=0, Int_t nCPU=1, Bool_t verbose=kTRUE, Bool_t splitCutRange=kTRUE) ;
+
+  DRecoSimulChi2Var(const char *name, const char *title, RooAbsReal& pdf, RooDataHist& data,
+		    const RooArgSet& projDeps, Bool_t extended=kFALSE, const char* rangeName=0, const char* addCoefRangeName=0, 
+		    Int_t nCPU=1, Bool_t verbose=kTRUE, Bool_t splitCutRange=kTRUE) ;
+
+  DRecoSimulChi2Var(const DRecoSimulChi2Var& other, const char* name=0);
+  virtual TObject* clone(const char* newname) const { return new DRecoSimulChi2Var(*this,newname); }
+
+//   virtual RooAbsTestStatistic* create(const char *name, const char *title, RooAbsPdf& pdf, RooAbsData& data,
+// 				      const RooArgSet& projDeps, const char* rangeName=0, const char* addCoefRangeName=0,
+// 				      Int_t nCPU=1, Bool_t verbose=kTRUE, Bool_t splitCutRange=kTRUE) {
+
+//     DRecoSimulChi2Var*newchi2=new DRecoSimulChi2Var(name,title,pdf,(RooDataHist&)data,projDeps,_extended,rangeName,addCoefRangeName,
+// 				 nCPU, verbose, splitCutRange);    
+//     newchi2->SetArrays(_Hists,_Pdfs,_Vars);
+//     return newchi2;
+//   }
+
+  
+  virtual RooAbsTestStatistic* create(const char *name, const char *title, RooAbsReal& real, RooAbsData& data,
+				      const RooArgSet& projDeps, const char* rangeName=0, const char* addCoefRangeName=0, 
+				      Int_t nCPU=1, Bool_t interleave=kFALSE, Bool_t verbose=kTRUE, Bool_t splitCutRange=kFALSE){
+    interleave=0;//dont know what this is for.
+    DRecoSimulChi2Var*newchi2=new DRecoSimulChi2Var(name,title,real,(RooDataHist&)data,
+						    projDeps,_extended,rangeName,addCoefRangeName,
+						    nCPU, verbose, splitCutRange);    
+    newchi2->SetArrays(_Hists,_Pdfs,_Vars);
+    return newchi2;
+  }
+
+  
+  virtual ~DRecoSimulChi2Var();
+
+  virtual Double_t defaultErrorLevel() const { return 1.0 ; }
+
+  void SetArrays(TList* Hists,TList* Pdfs,TList* Vars){
+    _Hists=Hists;
+    _Pdfs=Pdfs;
+    _Vars=Vars;
+    
+    _HistsIter= _Hists->MakeIterator();
+    _VarsIter= _Vars->MakeIterator();
+    _PdfsIter= _Pdfs->MakeIterator();
+
+  }
+
+
+  TGraph* ScanParameter(RooRealVar* Par);
+  TH2F* ScanParameter2D(RooRealVar* Par1,RooRealVar* Par2);
+
+protected:
+
+  static RooArgSet _emptySet ; // Supports named argument constructor
+
+  RooDataHist::ErrorType _etype ;
+  Bool_t _extended ;
+  virtual Double_t evaluatePartition(Int_t firstEvent, Int_t lastEvent, Int_t stepSize) const ;
+  
+
+  TList* _Hists;
+  TList* _Pdfs;
+  TList* _Vars;
+
+  TIterator* _HistsIter;
+  TIterator* _PdfsIter;
+  TIterator* _VarsIter;
+
+  Int_t          _ncpu;//number of cpu 
+
+
+  ClassDef(DRecoSimulChi2Var,1) // Abstract real-valued variable
+};
+
+
+#endif

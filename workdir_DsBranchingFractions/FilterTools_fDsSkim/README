@@ -1,0 +1,10 @@
+#
+# $Id: README,v 1.4 2000/03/07 12:35:58 yury Exp $
+#
+
+This is a README for FilterTools package. This package contains
+filter modules based on tag and micro database information. It produces
+three applications for centralized AWG skimming circa Spring 2000. For
+details, see 
+   http://www.slac.Stanford.edu/BFROOT/www/Physics/Forum/forum/phonemeetings/forum_07mar00/docs/skims/skims.html
+

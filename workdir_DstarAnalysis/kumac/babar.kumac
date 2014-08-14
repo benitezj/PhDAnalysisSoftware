@@ -1,0 +1,61 @@
+macro babar 1=xy 2=f 3=-18 x=10 y=10 a=1 keep=0 dshow=1
+*
+*************************************************************************
+* babar [xy|z] [f|h|n] [cut offset] [x=] [y=] [cut plane] [keep=]
+*
+* Draw cutaway view of the detector
+*
+*        xy  (default) = draw xy view
+*         z            = draw yz view
+*
+*         f  (default) = full view of detector
+*         h            = half view of detector
+*         n            = scale detector by [n]
+*
+*          keep=0 (default) delete pictures from memory first
+*               1           keep all pictures in memory
+*
+* Sept    1994 Doug Wright  added dshow
+* Aug 17, 1994 Doug Wright: added [keep]                                *
+* Nov     1993 Doug Wright: added scale factor option [n]               *
+* Mar     1993 Bill Lockman: add third argument: [cut offset]           *
+*                                 only works on xy view                 *
+*              D Wright: added x, y offset options                      *
+*************************************************************************
+
+if [keep] = 0 then
+ p/del *
+endif
+
+view   = [1]
+scale  = [2]
+offset = [3]
+
+* only one next
+next
+
+satt BFAC seen 0
+
+delete [dshow]; dopen [dshow]
+case [view] in
+ (xy)
+      case [scale] in 
+*  remember IP is not at 0,0,0
+         (f) dcut BFAC 3 [offset] [x] [y] .025 .025
+         (h) dcut BFAC 3 [offset] 10   2  .05  .05
+         (*) dcut BFAC 3 [offset] [x] [y] [scale] [scale]
+      endcase
+ (z) 
+   if [offset] = -18 then
+      offset = .1
+   endif
+      case [scale] in 
+         (f) dcut BFAC [a] [offset] [x] [y] .025 .025
+         (h) dcut BFAC [a] [offset] 10   2  .05  .05
+         (*) dcut BFAC [a] [offset] [x] [y] [scale] [scale]
+      endcase
+ (*) 
+endcase
+dclose [dshow]; dshow [dshow]
+
+return

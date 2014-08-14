@@ -1,0 +1,604 @@
+#ifndef DRecoDsInclusiveAnalysis_hh
+#define DRecoDsInclusiveAnalysis_hh
+
+#include "DRecoTagAnalysis.hh"
+
+#include "DRecoAddPdf.hh"
+#include "DRecoHistPdf.hh"
+#include "DRecoProdPdf.hh"
+#include "DRecoTranslationPdf.hh"
+
+#include "RooDataHist.h"
+#include "RooPolynomial.h"
+#include "RooHistPdf.h"
+#include "RooGenericPdf.h"
+#include "RooGaussian.h"
+#include "RooProdPdf.h"
+#include "RooPlot.h"
+#include "RooAddPdf.h"
+#include "RooProdPdf.h"
+#include "RooGenericPdf.h"
+#include "RooRealIntegral.h"
+#include "RooGlobalFunc.h"
+#include "RooCmdArg.h"
+#include "RooDataSet.h"
+#include <TH1F.h>
+
+#define NMAXEVT 20
+
+
+#define myD1ChargedLund 10413
+#define myD1NeutralLund 10423
+#define myXibLund 5132
+#define myXib0Lund 5232
+
+#define NFragDaus 20
+#define NDsMassBins 50
+#define DsMassMin 1.82
+#define DsMassMax 2.12
+#define DenominatorDsMassBinMin 20
+#define DenominatorDsMassBinMax 32
+#define DenominatorDsMassMin 1.934 //1.82+19*.006
+#define DenominatorDsMassMax 2.012 //1.82+32*.006
+#define NXR 4
+#define NXRMin -.5
+#define NXRMax 3.5
+#define NXT 6
+#define NXTMin -.5
+#define NXTMax 5.5
+#define NMAXDSCANDS 20
+
+
+//For Ds-->KKpi BF measurement
+//define the regions on the Dalits plot
+#define DalitsKKLowXMin 1.2
+#define DalitsKKLowXMax 2.325
+#define DalitsKKHighXMin 2.325
+#define DalitsKKHighXMax 3.4
+#define DalitsKKYMin .6
+#define DalitsKKYMax 1.
+#define DalitsKPiLowYMin 1.08
+#define DalitsKPiLowYMax 1.66
+#define DalitsKPiHighYMin 1.66
+#define DalitsKPiHighYMax 2.16
+#define DalitsKPiXMin .95
+#define DalitsKPiXMax 1.15
+
+
+class DRecoDsInclusiveAnalysis:public DRecoTagAnalysis{
+  ClassDef(DRecoDsInclusiveAnalysis,1);
+
+ public:
+  DRecoDsInclusiveAnalysis(Int_t DataType,TString OutputDir);
+  ~DRecoDsInclusiveAnalysis();
+  
+  /*
+  //Current analysis procedurce (June 12,2009)
+  1.Run Beta code with cuts on p*(Ds), fixed cut on Ds* mass, cut on vtx. prob., RS and WS are separate
+  2.Reduce Ntuple: apply cut on # of X  pi0s and X dependent Ds* mass cuts
+  3.Run CreateHistosForFit to do 1/n weighting on both RS and WS
+  4.Run Macro function CreatenXRCorrection to determine correction ratios for nXR=0,1 
+  5.Run RooFitData() which calls  RooFitDsMassvsnXRvsnXTSimulSigmaWeightModel to fit on full ccbar
+  6.Run Macro functions to create and fit Toy MC's which have approx. the same stats as data
+   */
+
+
+  Int_t ReduceNtuple();
+  void SetDsReduceCuts(Int_t _cutdsstmass,
+		       Int_t _cutevtvtxprob,
+		       Int_t _cutdspstar,
+		       Int_t _cutfragngams){
+    cutdsstmass=_cutdsstmass;
+    cutevtvtxprob=_cutevtvtxprob;
+    cutdspstar=_cutdspstar;
+    cutfragngams=_cutfragngams;
+  }
+  
+  Int_t ReduceNtupleGen();
+	
+  //
+  Int_t OptimizeXPi0Cuts();
+  Int_t DrawOptimizeXPi0Cuts();
+  
+  void DefaultPlots(); 
+  
+  void CreateHistosForFit();
+
+  //Simple Fit to the total 
+//   void RooFitDsMassWS();
+//   void RooFitDsMass();
+  void RooFitDsMassSimul();
+
+  //Fit as a function of nXR
+//   void RooFitDsMassWSvsnXR();  
+//   void ConstructWSBkgnXR0();//construct the wrong-sign background for nXR=0
+//   void RooFitDsMassvsnXR();
+  void RooFitDsMassvsnXRSimul();
+    
+  //Fit as a function of nXR and nXT
+ //  void RooFitDsMassWSvsnXRvsnXT(); 
+//   void ConstructWSBkgnXR0vsnXT(); //construct the wrong-sign background for nXR=0
+//   void RooFitDsMassvsnXRvsnXT();
+  void RooFitDsMassvsnXRvsnXTSimul(TH2F*HDsMassDataWS,TH2F*HDsMassData,TString resultFileName);
+  void PlotFitDsMassvsnXRvsnXTSimul();
+  void RooFitDsMassvsnXRvsnXTSimulWeightModel(TH2F*HDataWS,TH2F*HData,TString resultFileName);
+  void RooFitDsMassvsnXRvsnXTSimulSemiWeightModel(TH2F*HDataWS,TH2F*HData,TString resultFileName);
+  void RooFitDsMassvsnXRvsnXTSimulSigmaWeightModel(TH2F*HDataWS,TH2F*HData,TString resultFileName);
+  void RooFitData();
+
+  //toy mc
+  void CreateToys(Int_t toyid);
+
+  //BF calculation
+  void ComputeBF();
+
+  //BF calculation
+  void ComputeBFKKpi();
+  void ComputeBFKKpiDalitz();
+
+//   void CreateSigPdfs();
+//   void PlotSigPdfs();
+//   void CreateBkgPdfs();
+//   void PlotBkgPdfs();
+//   //wrong sign fit
+//   void RooFitDsMassWSSimple();
+//   //right-sign fit
+//   void RooFitDsMass();
+//   void RooFitDsMassSimple();
+    
+
+ protected:
+
+  void  FillDsInclusiveVars(); 
+  Bool_t DsEvtPassesCuts();
+  void  FillDsEventVars();
+  Int_t SetDsInclusiveBranches();
+  Int_t MakeDsInclusiveReducedNtupleBranches();
+ 
+  Int_t cutdsstmass;
+  Int_t cutevtvtxprob;
+  Int_t cutdspstar;
+  Int_t cutfragngams;
+  Bool_t DsPassesCuts();
+
+
+  char textlabel[100];    
+
+  RooRealVar nxr;
+  
+  //chain branches
+  Int_t   nEvt;
+  Int_t   EvtnDaus[NMAXEVT]; 
+  Float_t EvtChi2[NMAXEVT];  //Must be a float!
+  Int_t   EvtnDof[NMAXEVT];  
+  Int_t   EvtVtxStatus[NMAXEVT];
+  Float_t EvtMass[NMAXEVT];
+  Float_t Evtp3CM[NMAXEVT];  
+  Float_t EvtcosthCM[NMAXEVT];  
+  Float_t EvtphiCM[NMAXEVT];
+  Float_t EvtenergyCM[NMAXEVT];  
+  Int_t   EvtLund[NMAXEVT];  
+  Int_t   EvtMyGamMCIdx[NMAXEVT];  
+  Int_t   EvtMyKMCIdx[NMAXEVT];  
+  Int_t   EvtMyTagMCIdx[NMAXEVT];  
+  Int_t   Evtd1Lund[NMAXEVT];  
+  Int_t   Evtd1Idx[NMAXEVT];  
+  Int_t   Evtd2Lund[NMAXEVT];  
+  Int_t   Evtd2Idx[NMAXEVT];  
+  Int_t   Evtd3Lund[NMAXEVT];  
+  Int_t   Evtd3Idx[NMAXEVT];  
+  Int_t   Evtd4Lund[NMAXEVT];  
+  Int_t   Evtd4Idx[NMAXEVT];  
+  Float_t EvtVtxx[NMAXEVT];  
+  Float_t EvtVtxy[NMAXEVT];  
+  Float_t EvtVtxz[NMAXEVT];     
+  Float_t EvtTagUncVtxProb[NMAXEVT];
+  Float_t EvtDsStUncMass[NMAXEVT];
+  Float_t EvtDsUncMass[NMAXEVT];
+  Float_t EvtTagUncMass[NMAXEVT];
+  Int_t   EvtqualD[NMAXEVT]; 
+  Int_t   EvtqualK[NMAXEVT]; 
+  Int_t   EvtqualX[NMAXEVT]; 
+  Float_t EvtDsStPxRaw[NMAXEVT];
+  Float_t EvtDsStPyRaw[NMAXEVT];
+  Float_t EvtDsStPzRaw[NMAXEVT];
+  Float_t EvtDsStERaw[NMAXEVT];
+  Float_t EvtDsStPxCorr[NMAXEVT];
+  Float_t EvtDsStPyCorr[NMAXEVT];
+  Float_t EvtDsStPzCorr[NMAXEVT];
+  Float_t EvtDsStECorr[NMAXEVT];
+  Float_t EvtDsMassUnFit[NMAXEVT];
+  Int_t   FragdauMCIdx[NFragDaus][NMAXEVT];  
+  Float_t FragPi0Mass[NMAXEVT];
+
+  Int_t   nDsSt;
+  Float_t DsStMass[NMAXEVT];
+  Float_t DsStp3[NMAXEVT];    
+  Float_t DsStcosth[NMAXEVT];
+  Float_t DsStphi[NMAXEVT];   
+  Float_t DsStenergy[NMAXEVT];  
+  Float_t DsStp3CM[NMAXEVT];  
+  Float_t DsStcosthCM[NMAXEVT];  
+  Float_t DsStphiCM[NMAXEVT];
+  Float_t DsStenergyCM[NMAXEVT];  
+  Int_t   DsStLund[NMAXEVT];   
+  Int_t   DsStd1Lund[NMAXTAG];  
+  Int_t   DsStd1Idx[NMAXTAG];  
+  Int_t   DsStd2Lund[NMAXTAG];  
+  Int_t   DsStd2Idx[NMAXTAG];  
+
+  Int_t   nDs;
+  Float_t DsMass[NMAXTAG];
+  Float_t Dsp3CM[NMAXTAG];  
+  Float_t DscosthCM[NMAXTAG];  
+  Float_t DsphiCM[NMAXTAG];
+  Float_t DsenergyCM[NMAXTAG];  
+  Int_t   DsLund[NMAXTAG];  
+
+  //for Ds tags
+  Int_t   DsMCIdx[NMAXTAG]; 
+  Int_t   DsnDaus[NMAXTAG]; 
+  Int_t   Dsd1Lund[NMAXTAG];  
+  Int_t   Dsd1Idx[NMAXTAG];  
+  Int_t   Dsd2Lund[NMAXTAG];  
+  Int_t   Dsd2Idx[NMAXTAG];  
+  Int_t   Dsd3Lund[NMAXTAG];  
+  Int_t   Dsd3Idx[NMAXTAG];  
+  Int_t   Dsd4Lund[NMAXTAG];  
+  Int_t   Dsd4Idx[NMAXTAG]; 
+  Float_t DsChi2[NMAXTAG];
+  Int_t   DsnDof[NMAXTAG];  
+  Int_t   DsVtxStatus[NMAXTAG];
+  Float_t DsVtxx[NMAXTAG];  
+  Float_t DsVtxy[NMAXTAG];  
+  Float_t DsVtxz[NMAXTAG];  
+  Float_t DsFlightBSLen[NMAXTAG];
+  Float_t DsFlightBSErr[NMAXTAG];
+
+  Int_t   nFrag;
+  Int_t   FragnDaus[NMAXEVT];  
+  Float_t FragChi2[NMAXEVT];  //Must be a float!
+  Int_t   FragnDof[NMAXEVT];  
+  Int_t   FragVtxStatus[NMAXEVT];
+  Float_t FragMass[NMAXEVT];
+  Float_t Fragp3CM[NMAXEVT];  
+  Float_t FragcosthCM[NMAXEVT];  
+  Float_t FragphiCM[NMAXEVT]; 
+  Float_t FragenergyCM[NMAXEVT];   
+  Int_t   FragLund[NMAXEVT];  
+  Int_t   FragdauLund[NFragDaus][NMAXEVT];  
+  Int_t   FragdauIdx[NFragDaus][NMAXEVT];  
+
+  Int_t   nPK;
+  Float_t PKMass[NMAXEVT];
+  Float_t PKp3CM[NMAXEVT];  
+  Float_t PKcosthCM[NMAXEVT];  
+  Float_t PKphiCM[NMAXEVT];
+  Float_t PKenergyCM[NMAXEVT];  
+  Int_t   PKLund[NMAXEVT];  
+  Int_t   PKd1Lund[NMAXEVT];  
+  Int_t   PKd1Idx[NMAXEVT];  
+  Int_t   PKd2Lund[NMAXEVT];  
+  Int_t   PKd2Idx[NMAXEVT];  
+
+
+  ////indexes
+  Int_t   EvtIdx;
+  Int_t   DsStIdx;
+  Int_t   DsIdx;
+  Int_t   GamIdx;
+  Int_t   TagKIdx; 
+  Int_t   FragIdx;
+  
+  //MC indexes
+  Int_t  DsGenMCIdx;
+  Int_t  DsStGenMCIdx;
+  Int_t  GamGenMCIdx;
+  Int_t  KGenMCIdx;
+
+
+  ///////derived variables
+  //Upsilon quantities
+  Float_t evtmass;// mass
+  Float_t evtpx;//lab x momentum
+  Float_t evtpy;//lab y momentum
+  Float_t evtpz;//lab z momentum
+  Float_t evtcmenergy;// c.m energy
+  Float_t evtpstar;// p*
+  Float_t evtphistar;//c.m phi angle 
+  Float_t evtcosstar;//c.m polar angle
+  Int_t   evtcharge;//charge 
+  Int_t   evtbestcand;//
+  Float_t evtvtxprob;//fit prob.
+  Float_t evtvtxx;//vertex position in lab
+  Float_t evtvtxy;
+  Float_t evtvtxz;
+  Float_t evtfit1vtxprob;//if performing double fit this prob. of first fit
+  Int_t   evtnXTgen;//= # virtual gamma daughters - 2 . -2 accounts for c-cbar quarks.
+  Int_t   evtDKXcombination;//id assigned to charge config of D-K-X
+  Int_t   evthassignal;//event has Ds*-->Ds gamma
+  Int_t   evthasDs;//event has Ds 
+  Int_t   evthasKK;//event has KK pair from fragmentation
+  Int_t   evthasDspi0;//event has Ds*-->Ds pi0
+  Int_t   evthasD0gam;//event has D*0-->D0 gamma
+  Int_t   evthasD0pi0;//event has D*0-->D0 pi0
+  Int_t   evthasDCpi0;//event has D*+-->D+pi0
+  Int_t   evtfragnpartgen;//number of X daughters for this event != to fragnpartgen because different DKXg candidates havd D*s tags
+  Int_t   evthasDstarPlus;
+  Float_t evtmcdatacorrweight;
+
+  //quantities calculated from all particles belonging to the tag side
+  Float_t tagsidemass;//mass
+  Float_t tagsideenergycm;//c.m. energy
+  Float_t tagsidepstar;//c.m momentum
+  Float_t tagsidecosthcm;//polar angle in c.m.
+  Float_t tagsidedeltae;//energy - half beam energy
+  
+  //quantities calculated from all particles belonging to the signal side
+  Float_t sigsidemass;
+  Float_t sigsideenergycm;
+  Float_t sigsidepstar;
+  Float_t sigsidecosthcm;
+  Float_t sigsidedeltae;
+   
+  //X quantities
+  Int_t   fragcharge;//charge
+  Int_t   fraglund;
+  Float_t fragpstar;//c.m. momentum
+  Float_t fragmass;
+  Int_t   fragndaus;//# of daughters
+  Float_t fragangle;//angle to tag
+  Float_t fragenergy;//c.m. energy
+  //Int_t   fragmctrue;//# of particles in X passing truth-match
+  Int_t   fragpimctrue;//# of pi's in X passing truth-match
+  Int_t   fragpi0mctrue;//# of pi0's in X passing truth-match
+  Int_t   fraggammctrue;//# of gammas in X passing truth-match
+  Int_t   fragnpis;//# of pi+'s
+  Int_t   fragnpi0s;//# of pi0's
+  Int_t   fragngams;//# of gams
+  Int_t   fragqual;//# of pi+'s passing track quality
+  Int_t   fragnpartgen;//# of X particles generated
+  Int_t   fragnpigen;//# of pi+'s  generated
+  Int_t   fragnpi0gen;//# of pi0's  generated
+  Int_t   fragngamgen;//# of gams  generated
+  Float_t fragpdiff;//magnitude of p3 difference between reco and gen
+  Float_t fragp4diff;//magnitude of p4 difference between reco and gen
+  Float_t fragangletogen;//angle to true X
+  TLorentzVector FragGenp4CM;
+  Float_t fragpilowpgen;
+  Float_t fragpi0lowegamgen;
+  Float_t fragisregamgen;
+  Float_t fragpiavgangle;
+  Float_t fragpip;//p_lab of the first pi+ in X
+  Float_t fragpipstar;//p* of the first pi+ in X
+  Float_t fragpi0avgangle;
+  Float_t fragpi0avggamenergy;
+  Float_t fragpi0mass;//mass of the first pi0 in X
+  Float_t fragpi0p;//p_lab of the first pi0 in X
+  Float_t fragpi0pstar;//p* of the first pi0 in X
+  Float_t fragpi0gamenergy;//energy of lower gamma of first pi0 in X
+  Float_t fragpi0gamenergymodified;//energy of lower gamma of first pi0 in X, this variabe has an angle dep. downward offset
+  Int_t   fragpi0true;//truth match of first pi0 in X
+  Float_t fraggamangle;//angle of gamma in X w.r.t Tag
+  Int_t   fragpipid;//largest selector passed pion worst X pion.
+  Int_t   fragpipidtrue;//truth-match of pion with worst pid selector
+  Float_t fragD0ToKpi;
+  Float_t fragD0ToKpipi0;
+  Float_t fragD0ToK3pi;
+  Float_t fragDcToKpipi;
+
+  Int_t   fragnpiFake;
+  Int_t   fragnpiD;
+  Int_t   fragnpiK;
+  Int_t   fragnpiX;
+  Int_t   fragnpiDs;
+  Int_t   fragnpi0Fake;
+  Int_t   fragnpi0D;
+  Int_t   fragnpi0K;
+  Int_t   fragnpi0X;
+  Int_t   fragnpi0Ds;
+  Int_t   fragngamFake;
+  Int_t   fragngamD;
+  Int_t   fragngamK;
+  Int_t   fragngamX;
+  Int_t   fragngamDs;
+
+
+  //Ds quatities
+  Float_t dsmass;//mass of Ds for denominator measurement
+  Float_t dsmassconst;//mass computed using the p3 of the Ds* and gamma with Ds* mass set to PDG
+  Float_t dsenergycm;//c.m. energy
+  Float_t dsp;//lab momentum
+  Float_t dspstar;//c.m. momentum
+  Int_t   dscharge;//charge
+  Float_t dsangle;//angle to tag
+  Float_t dspstargen;//c.m. momentum
+  Float_t dspxdiff;//difference between reco. and gen. x momentum
+  Float_t dspydiff;
+  Float_t dspzdiff;
+  Float_t dspdiff;//magnitude of 3-momentum difference 
+  Float_t dsuncmass;//mass before the Ds* is mass constrained
+  Float_t dsunfitmass;//mass right before the fit.(=dsuncmass if no correction applied)
+  TLorentzVector Dsp4CM;
+  
+  //Ds* quatities
+  Float_t dsstmass;//a delta function at Ds* mass
+  Float_t dsstuncmass;//m(beams-DKX)
+  Float_t dsstdeltam;//dsstuncmass-dsuncmass;
+  Float_t dsstp;//lab p
+  Float_t dsstpstar;//c.m. p
+  Float_t dsstenergycm;//c.m. energy
+  Float_t dsstangle;//angle to tag
+  Float_t dsstdecayangle;//angle of gamma in Ds* rest frame
+  Float_t dsstcorrpdiff;//magnitude of (p3Corrected - p3Raw) 
+  Float_t dsstfitpdiff;//magnitude of (p3Fitted - p3Corrected) //note p3Corrected= p3Raw if no correction applied
+  
+  //Ds* gamma 
+  Float_t gamenergy;//lab energy
+  Float_t gamenergycm;//c.m. energy
+  Float_t gamangle;//angle to tag in c.m frame
+  Float_t gamKangle;//angle to K in c.m frame
+  Float_t gamdsstangle;//angle to Ds* in c.m. frame
+  Int_t   gammctrue;//true gamma mc index
+  Int_t   gamsource;//source of the photon
+  Float_t gamanglelab;//angle in lab
+  Float_t gamlat;
+  Float_t gamA42;
+  Float_t gamncrystals;
+  Float_t gambumpdist;
+  Float_t gamtrkdist;
+
+  //K 
+  Float_t Kangle;//angle to tag
+  Float_t Kpstar;//c.m. momentum
+  Float_t Kp;//lab momentum
+  Int_t   Kmctrue;//true K mc index
+  Int_t   Klund;//lund id
+  Int_t   Kqual;//track quality pass/fail
+  Int_t   Kcharge;//
+  Int_t   Ksource;//source of K: 1=K, 2=D, 3=phi from X, 4=Ds,
+  Float_t Kflights;
+  Int_t   Kpid;
+
+  //Proton for LambdaC tags
+  Int_t   pcharge;
+  Float_t ppstar;
+
+  //extra tag quantities
+  Float_t tagangleToDst0;
+  
+  
+  //TMVA
+  Float_t BDTOutPut;
+
+  //Ds-->KKpi
+  //MC Gen
+  Int_t KKpiGenMCIdx;
+  Float_t kkmassgen;
+  Float_t kpimassgen;
+  Float_t priorkkmassgen;
+  Float_t priorkpimassgen;
+  //TCut DalitsCut[5];  
+
+  Bool_t DsToKKpiPassesDalitzCut(Int_t d);
+
+ private:
+
+  Float_t mcscalefactor;
+  
+  Bool_t IsFragDaughter(Int_t mcid);
+
+  Int_t  DetermineFragDauSource(Int_t mcid);
+  Int_t nFragDauTotal;
+  Int_t nFragDauFake;
+  Int_t nFragDauFromX;  
+  Int_t nFragDauFromD;
+  Int_t nFragDauFromK;
+  Int_t nFragDauFromDs;
+  Int_t nFragPiDauTotal;
+  Int_t nFragPiDauFake;
+  Int_t nFragPiDauFromX;  
+  Int_t nFragPiDauFromD;
+  Int_t nFragPiDauFromK;
+  Int_t nFragPiDauFromDs;
+  Int_t nFragPi0DauTotal;
+  Int_t nFragPi0DauFake;
+  Int_t nFragPi0DauFromX;  
+  Int_t nFragPi0DauFromD;
+  Int_t nFragPi0DauFromK;
+  Int_t nFragPi0DauFromDs;
+  Int_t nFragGamDauTotal;
+  Int_t nFragGamDauFake;
+  Int_t nFragGamDauFromX;  
+  Int_t nFragGamDauFromD;
+  Int_t nFragGamDauFromK;
+  Int_t nFragGamDauFromDs;
+  TH1F HPi0AngleFake;
+  TH1F HPi0AngleTrue;
+  TH1F HPi0GamAngleFake;
+  TH1F HPi0GamAngleTrue;
+  TH1F HPi0GamEnergyFake;
+  TH1F HPi0GamEnergyTrue;
+
+  TLorentzVector Dst0p4CM;
+
+  Float_t DsStUncMassSigma0pi0[5];// Ds* Mass Resolution for X with 0 pi0 as function of number of charged pions  
+  Float_t DsStUncMassMean0pi0;//Mean value of Ds* Mass for X with 0 pi0 constant vs. number of charged pions
+  Float_t DsStUncMassSigma1pi0;// Mean value of Ds* Mass for X with 1 pi0 constant vs. number of charged pions  
+  Float_t DsStUncMassMean1pi0;// Ds* Mass Resolution for X with 1 pi0 constant vs. number of charged pions
+
+
+  //variables and Pdfs for the mass vs. nxr fit
+  RooArgSet nset;  
+
+  RooDataHist* DsMassDataSetSigWS[NXT];
+  DRecoHistPdf* SigPdfWS[NXT];
+  Float_t truewws[NXT];
+  Float_t totalwws;
+
+  DRecoProdPdf* WSBkgnXRPdfRaw[NXR];
+  RooDataHist* WSBkgnXRSelectDat[NXR];
+  DRecoHistPdf* WSBkgnXRSelectPdf[NXR];
+  DRecoTranslationPdf* WSBkgnXRTransPdf[NXR];//bkg model for nXR=0
+  RooRealVar* delta[NXR];
+  RooRealVar* bkgaddcoef[NXR];
+  RooDataHist* WSnXR0CorrDat;
+  DRecoHistPdf* WSnXR0CorrPdf;
+  DRecoTranslationPdf* WSBkgnXR1TransPdf[NXR];//bkg model for nXR=1
+  RooRealVar* delta1[NXR];
+  RooRealVar* bkgaddcoef1[NXR];
+  RooDataHist* WSnXR1CorrDat;
+  DRecoHistPdf* WSnXR1CorrPdf;
+
+  RooRealVar*  BkgnXRYield[NXR];//yields for each nXR
+  DRecoProdPdf* WSBkgnXRPdf[NXR];
+
+  RooDataHist* DsMassDataSetSig[NXT];
+  DRecoHistPdf* SigPdf[NXT];
+  Float_t truew[NXT];
+  Float_t totalw;
+
+  Float_t truebkgw[NXR];
+
+  //WS model of the weights
+  RooRealVar nxtws;
+  RooArgSet  nxtsetws;
+  RooRealVar nxt;
+  RooArgSet  nxtset;
+
+  RooRealVar mean1WS;
+  RooRealVar sigma1WS;
+  RooRealVar fracWS;
+  RooRealVar mean2WS;
+  RooRealVar sigma2WS;
+  RooGenericPdf* weightPdfWS;
+
+  RooRealVar mean1;
+  RooRealVar sigma1;
+  RooRealVar frac;
+  RooRealVar mean2;
+  RooRealVar sigma2;
+  RooGenericPdf* weightPdf;
+
+  RooRealIntegral* JInt;
+  RooFormulaVar* R2Integ;
+  RooFormulaVar* Frac;
+  RooGenericPdf WeightModelPdf;
+  RooFormulaVar* WeightModel;
+  
+  //RooRealIntegral* nXTCoefWS[NXT];
+  RooFormulaVar* nXTCoefWS[NXT];
+  RooRealVar* nXTCoef[NXT];
+  //RooRealIntegral* nXTCoefWM[NXT];
+  RooFormulaVar* nXTCoefWM[NXT];   
+
+  RooRealVar TotYieldWS;
+  RooRealVar TotYield;
+  RooRealVar WStoRSFrac;
+  
+
+};
+  
+
+#endif
+

@@ -1,0 +1,30 @@
+///-ALL the classes need to be loaded into ROOT first using the Load.C macro 
+///-MassFitter uses Minuit to perform the fit on the mass distribution (Histo).
+///-the signal and background PDFs are defined inside and are specified in the InitRooFitPars.txt file
+///-the fit is performed with a macro like the one below
+///-Results of the fit are saved in a postscript and root file in the current directory
+
+
+#include "MassFitter.h"
+#include "Roo2BodyMassPhaseSpace.h"
+
+void Fit(){
+
+  RooRealVar mass("mass","mass",2.0,3.0);
+  RooRealVar dau1m("dau1m","dau1m",1.8693);
+  RooRealVar dau2m("dau2m","dau2m",0.139570);
+  Roo2BodyMassPhaseSpace TwoBodyPS("TwoBodyPS","TwoBodyPS",mass,dau1m,dau2m);
+
+  MassFitter massfitter;
+  massfitter.SetPhaseSpace(&TwoBodyPS);
+  massfitter.SetDauMasses(&dau1m,&dau2m);
+
+  massfitter(&mass) 
+  massfitter.Initialize(Histogram,"InitRooFitPars.txt");
+  massfitter.Fit();
+  massfitter.Save("./");
+
+}
+
+
+

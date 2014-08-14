@@ -1,0 +1,52 @@
+
+ *** This document describes how to compile and load
+ *** It uses a hacked version of the RooFitCore package GNUMakefile.standalone
+
+
+Package contents:
+-----------------
+
+      .cc -> C++ code
+      .hh -> C++ headers 
+      .rdl -> C++ headers that need to be processed by rootcint
+
+Compiling                      
+----------------
+   *mkdir NtupleCode/tmp
+   *if recompiling you may want clean out NtupleCode/tmp : gmake clean
+   *make sure LD_LIBRARY_PATH is set: setenv LD_LIBRARY_PATH $ROOTSYS/lib
+   *Note:.hh paths in .hh files cannot have full path name.
+   *make sure your class/function is linked in DRecoilToolsUser_LinkDef.rdl     
+
+   Execute 'gmake' inside the NtupleCode/ directory   
+
+
+Loading in your ROOT session
+-----------------------------------
+   * cp RooLogon.C to your workdir
+   * add NtupleCode/tmp/ (but use full path)  to your  LD_LIBRARY_PATH
+   Execute  'root' from workdir
+
+Example Analysis Job:
+----------------------------------
+*For convenience currently I use two wrapper scripts to perform an analsys task.
+ Copy the following macros to your workdir 
+-DsInclusiveAnalysisInit.C
+-Load.C
+
+*This is how I run a Reduce job interactively:
+Execute: `root Load.C`
+>DRecoDsInclusiveAnalysis*a=analyzeDsInclusive(1,1)
+>a->ReduceNtuple()
+
+*This is how I run a Reduce job in the batch:
+-Create a simple macro with the following lines:
+>gROOT->ProcessLine(".x Load.C");
+>DRecoDsInclusiveAnalysis* a=analyzeDsInclusive(1,1);
+>a->ReduceNtuple();
+*Then execute: bsub -q long -o Ntuple.log -C 0 -J Ntuple root -b macro.C
+
+
+
+
+

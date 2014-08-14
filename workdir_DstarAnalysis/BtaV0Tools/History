@@ -1,0 +1,61 @@
+$Id: History,v 1.9 2004/01/23 22:59:53 lockman Exp $
+
+BtaV0Tools History
+------------------
+
+23-Jan-2004 Lockman V00-00-07
+-----------------------------
+- BtaBS:::BtaBS: added optional arguments algo (=0,default: standard Tilt calc;
+                 !=0: WMD tilt calc) and debug (printout) arguments.
+
+12-Jan-2004 Lockman V00-00-06
+-----------------------------
+- BtaBS: properly initialize tilt angles
+- added BtaCollAxisSlope, an alternate class to compute the collision axis
+  tilt angles, based on Bill Dunwoodie's fortran code 
+  ~wmd/bbkinematics/Collision_Axis_Tilt.f. The angles are computed iteratively
+  rather than by diagonalizing the beam spot covariance matrix.
+- BtaCollisionAxisTilt: cache the beam spot covariance matrix and recompute
+  the collision axis tilts only when the beam spot covariance changes.
+  
+11-Nov-2003 Coleman, Lockman V00-00-05
+--------------------------------------
+- BtaBS::SfL3d() Returns Signed Flight Length; initialized all data members.
+
+
+10-Nov-2003 Lockman
+-------------------
+- change GetXZTilt() to XZTilt(), GetYZTilt() to YZTilt().
+- BtaBS::Compute(const BtaCandidate* parent, const BtaCandidate* dau1,
+                 const BtaCandidate* dau2) also computes the separation 
+                 distance.
+- BtaBS::Sep3d() returns the separation distance.
+
+10-Nov-2003 Lockman, Coleman
+-----------------------------
+- added BtaBS to simpify computing poca, etc. 
+  ctor: BtaBS(const BbrPointErr)
+  method: void Compute(const BtaCandidate*) : computes doca, radius, zcoll
+  accessors:   
+  const Hep3Vector Doca()  : the doca vector
+  double GetXZTilt() const : beam spot XZ tilt
+  double GetYZTilt() const : beam spot YZ tilt
+  double Radius() const    : xy radius of poca wrt collision axis
+  double Zcoll() const     : distance along collision axis of poca
+
+
+16-Sept-2003 Roat V00-00-02
+--------------------------------
+- added const to all methods which don't change internal variables
+- BtaClosestApproach.{hh,cc}: moved initialization to method init(),
+  and added a 2nd constructor.  Both constructors call the init()
+  method.
+- BtaCollisionAxisSlope.cc: moved cout calls to ErrLogger, and
+  added explicit return values for all non-void methods.  Moved
+  the "new HepSymMatrix" to just an instantiation.
+- BtaSeperationDist.cc:  Added explicit checks that the candidates
+  being used are really charged.
+- BtaSignedFlightLength3d.cc: updated to use new constructor of
+  BtaClosestApproach.
+- link_BtaV0Tools.m: added dependance on ErrLogger
+

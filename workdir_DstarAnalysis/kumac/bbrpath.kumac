@@ -1,0 +1,19 @@
+* $Id: bbrpath.kumac,v 1.1 2004/12/09 23:40:42 kelsey Exp $
+*
+* Search standard BaBar path for specified filename.  Search order is
+* (1) current directory, (2) RELEASE symlink, (3) PARENT symlink,
+* (4) ONLINEPARENT symlink.
+*
+* Usage:  In PAW, write $EXEC('bbrpath <filename>')
+
+MACRO BBRPATH FILE=xxx
+  FOR DIR IN . RELEASE PARENT ONLINEPARENT
+     NAME = [DIR]//'/'//[FILE]
+     IF $FEXIST([NAME]).NE.0 THEN
+        EXITM [NAME]
+     ENDIF
+  ENDFOR
+
+  MESSAGE BBRPATH: File [FILE] not found.
+  EXITM ''
+RETURN

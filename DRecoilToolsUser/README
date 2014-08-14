@@ -1,0 +1,92 @@
+================================================================================
+DRecoilApp creates ntuples for the analyses D(s)->l nu.
+================================================================================
+
+To get DRecoilApp to build properly you need to do the following:
+
+Do the usual srtpath, anal50boot stuff.
+Add and set up workdir.
+
+Check out the CharmTagTools package.
+
+Check out the BtaTupleMaker package.
+Copy BtuCandBlock.cc and BtuCandBlock.hh from DRecoilToolsUser to the 
+BtaTupleApp directory.  (This allows us to store the charge of a BtaCandidate to 
+the ntuple.)
+
+Check out the PackageList package.
+Add the following stanza to the top of PackageList/link_all_reco.mk
+
+  PACKAGELIST += DRecoilToolsUser
+  ifneq ($(LINK_DRecoilToolsUser),)
+          LINKLISTDEPENDS += [LINK_DRecoilToolsUser, $(LINK_DRecoilToolsUser)]
+          override LOADLIBES += -lDRecoilToolsUser
+          -include DRecoilToolsUser/link_DRecoilToolsUser.mk
+  endif
+
+Build all the packages with "bsub -q bldrecoq gmake build all".
+
+Two tcl files are also supplied.  main.tcl does all the work and snippet.tcl 
+specifies the input collections, number of events and output root file.  Some 
+collection tcl files are stored at /nfs/farm/babar/AWG90/aidanrc/snippets/
+
+================================================================================
+
+DRecoilApp will pass lists of BtaCandidates and other data (via UsrData) to
+BtaTupleMaker which will produce an ntuples storing the following information:
+
+- A list of tag candidates with the following variables:
+    Mass, MassErr, Charge, Lund,
+    p3CM, costhCM, phiCM, pxCM, pyCM, pzCM, energyCM, 
+    MCIdx, daughters lund, daughters TrkIdx,
+
+    is_a_tag, (set to 1 for a tag)
+    is_DT, (set to 0 for a tag)
+
+    RS, WS, (right/wrong sign wrt at least one signal candidate track)
+    FH, BH, (backward/forward direction wrt to at least one signal candidate
+    track)
+    FH_RS, FH_WS, BH_RS, BH_WS (as above, right/wrong sign AND backward/forward
+    wrt to at least one signal candidate)
+    tag_mode (as different tags share the same block in the ntuple)
+
+    Number of candidates for each tag in the event.
+    Numbers of RS/WS, FH/BH etc candidates in the event.
+
+    Similar blocks for composite daughters of tags.
+
+- p4 calculations:
+    p4CM_pion- the missing four-momentum assuming that every track in 
+    ChargedTracks has the mass of a charged pion and using all clusters in 
+    CalorNeutral.
+
+    p4CM_cascade- the missing four-momentum using a cascading PID based on the
+    method outlined in BetaPid/PidSimpleTaggingDispatch.
+
+    CosThMiss_pion- the cos(theta) of p4Miss in the lab frame assuming each 
+    track in ChargedTracks has the mass of a charged pion and using all clusters
+    in CalorNeutral.
+
+- Track lists for e, mu, pi, K, p with the following variables:
+    Charge, Lund
+    Doca, Doca_XY, Poca, Poca_XY,
+    p3CM, costhCM, phiCM, pxCM, pyCM, pzCM, energyCM,
+    TrkIdx, MCIdx
+
+    Number of each kind of track candidate.
+
+- Gamma list with the following variables:      
+    Doca, Doca_XY, Poca, Poca_XY,
+    p3CM, costhCM, phiCM, pxCM, pyCM, pzCM, energyCM,
+    TrkIdx, MCIdx
+    EMC variables
+
+- Composite particles for Kshort and pi0 with the same variables as for tracks
+  in addition to Mass, MassErr
+
+- Event variables:
+    thrust, sphericityAll, visible_charge, R2, R2All
+    upperID, lowerID, runNumber, partition, 
+    beamspot
+
+- MC truth block

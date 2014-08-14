@@ -1,0 +1,87 @@
+#ifndef DRecoDsToKKpiAnalysis_hh
+#define DRecoDsToKKpiAnalysis_hh
+
+#include "DRecoDsInclusiveAnalysis.hh"
+
+#define KKPiMassCutMin 1.93
+#define KKPiMassCutMax 2.00
+#define NKKpiDsStFitBins 23
+#define KKpiDsStFitMin 2.040
+#define KKpiDsStFitMax 2.224
+
+class DRecoDsToKKpiAnalysis:public DRecoDsInclusiveAnalysis{
+  ClassDef(DRecoDsToKKpiAnalysis,1);
+
+ public:
+  DRecoDsToKKpiAnalysis(Int_t DataType,TString OutputDir);
+  ~DRecoDsToKKpiAnalysis();
+
+
+  void SetBlind(Bool_t blind){Blind=blind;}
+
+  Int_t ReduceNtuple();
+
+  Int_t DefaultPlots();
+  
+  Int_t CreateHistosForFit();
+ 
+  Int_t RooFitKKPiYieldDsSt();
+  //Int_t RooFitKKPiYieldDsStDalitz();
+  //Int_t RooFitKKPiYieldDeltaM();
+
+  Int_t PlotEfficiency();
+ 
+  Float_t KKpiDalitzCorrFactor();
+
+ protected:
+
+  Bool_t  FillDsToKKpiEventVars();
+  Bool_t DsToKKpiEvtPassesCuts();
+  Bool_t  FillDsToKKpiVars(); 
+  Bool_t DsToKKpiPassesCuts();
+  Int_t SetDsToKKpiBranches();
+  Int_t MakeDsToKKpiReducedNtupleBranches();
+  
+  Float_t EvtKKpiMass[NMAXEVT];
+  Int_t   EvtnKKpi[NMAXEVT];  
+  Float_t EvtKKpiDeltaM[NMAXEVT];  
+  Float_t EvtKKpiDsStMass[NMAXEVT];
+  Float_t EvtKKpiPstar[NMAXEVT];  
+  Float_t EvtKKpiAngle[NMAXEVT];  
+  Float_t EvtKKMass[NMAXEVT];  
+  Float_t EvtKpiMass[NMAXEVT];  
+  Int_t   EvtKKpiNExtraTrk[NMAXEVT];  
+  Int_t   EvtKKpiNExtraNeutral[NMAXEVT];  
+  Float_t EvtKKpiExtraNeutralE[NMAXEVT];  
+  Int_t   EvtKKpiDsStMCIdx[NMAXEVT];
+  Int_t   EvtKKpiDsMCIdx[NMAXEVT];
+
+  
+  ///////derived variables
+  Float_t kkpimass;
+  Int_t   nkkpi;
+  Float_t kkpideltam;
+  Float_t kkpidsstmass;
+  Float_t kkpipstar;
+  Float_t kkpiangle;
+  Float_t kkmass;
+  Float_t kpimass;
+  Int_t   kkpinextrak;
+  Int_t   kkpinextneu;
+  Float_t kkpiextenergy;
+  Int_t   kkpimctrue;
+  Int_t   kkpidsmctrue;
+
+  Float_t kkpimm2;
+  
+ private:
+
+  Float_t mcyields[5];
+
+  Bool_t Blind;
+
+};
+  
+
+#endif
+

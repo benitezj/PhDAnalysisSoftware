@@ -1,0 +1,6 @@
+macro psportrait
+fortran/file 66 paw.ps
+graphics/metafile -66 -111
+pic/plot ' '
+close 66
+message Written to paw.ps

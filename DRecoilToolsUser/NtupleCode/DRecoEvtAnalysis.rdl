@@ -1,0 +1,136 @@
+#ifndef DRecoEvtAnalysis_hh
+#define DRecoEvtAnalysis_hh
+
+#include "Riostream.h"
+#include <fstream>
+#include <iomanip>
+#include <time.h>
+#include <math.h>
+#include "TROOT.h"
+#include "TSystem.h"
+#include "TMinuit.h"
+#include "TDirectory.h"
+#include "TChain.h"
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TVector3.h"
+#include "TLorentzRotation.h"
+#include "TLorentzVector.h"
+#include "TLine.h"
+#include "TGraphErrors.h"
+#include "TLatex.h"
+
+using std::streambuf;
+using std::ostream;
+using namespace std;
+
+////////////////////////
+
+
+#define MAXMCLEN 200
+
+class DRecoEvtAnalysis:public TNamed{
+  ClassDef(DRecoEvtAnalysis,1);
+
+ public:
+	
+  DRecoEvtAnalysis(Int_t DataType,TString OutputDir);
+
+  //Destructor
+  ~DRecoEvtAnalysis();
+  
+  //chain of ntuples to be reduced 
+  void SetChain(TChain* ch){_fChain=ch;}
+
+  //	
+  void SetEvtReduceCuts(Int_t _cutrunnumber,Int_t _cuteventid){
+     cutrunnumber=_cutrunnumber;cuteventid=_cuteventid;
+  }	
+  virtual Int_t ReduceNtuple();
+ 
+  //
+  TTree* GetNtuple(){OpenReducedNtuple();return ReducedNtuple;}
+
+  //
+  TString GetOutPutDir(){return _OutputDir;}
+ 
+ protected:
+
+  TChain* _fChain;//ntuple chain derived from BtuTupleMaker ntuples
+  Int_t _DataType;//SigMC=0, GenericMC=1, DATA=2
+  TString _OutputDir;//directory where results will be dumped
+  TFile* OutPutFile;//temporary file where results are saved.
+  TTree* ReducedNtuple;//pointer to reduced Ntuple
+
+  Bool_t FillEventVars();  
+  Int_t SetEventBranches();
+  Int_t MakeEventReducedNtupleBranches();
+
+  //cuts
+  Int_t cutrunnumber;
+  Int_t cuteventid;
+  Bool_t EvtPassesCuts();
+	
+  //
+  Int_t OpenReducedNtuple();
+  Int_t CloseReducedNtuple();
+
+  //for saving plots
+  TCanvas* Canvas;
+  TString filename;
+  TLine cutline;
+  TLatex text;
+
+  //branches in chain
+  Int_t date;
+  Int_t runNumber;
+  Float_t eePx;      
+  Float_t eePy;   
+  Float_t eePz;    
+  Float_t eeE;      
+  Float_t beamSX;   
+  Float_t beamSY;   
+  Float_t beamSZ;    
+  Float_t primVtxX;
+  Float_t primVtxY; 
+  Float_t primVtxZ; 
+
+
+  ////MC block
+  Int_t   mcLen;
+  Int_t   mcLund[MAXMCLEN];
+  Int_t   mothIdx[MAXMCLEN];
+  Int_t   dauLen[MAXMCLEN];
+  Int_t   dauIdx[MAXMCLEN];
+  Float_t mcmass[MAXMCLEN]; 
+  Float_t mccosth[MAXMCLEN];
+  Float_t mcphi[MAXMCLEN];
+  Float_t mcp3[MAXMCLEN];
+  Float_t mcenergy[MAXMCLEN];
+  Float_t mccosthCM[MAXMCLEN];
+  Float_t mcphiCM[MAXMCLEN];
+  Float_t mcp3CM[MAXMCLEN];
+  Float_t mcenergyCM[MAXMCLEN];
+  Float_t mcVtxx[MAXMCLEN]; 
+  Float_t mcVtxy[MAXMCLEN]; 
+  Float_t mcVtxz[MAXMCLEN]; 
+  
+  
+  //-----Variables that may be used in higher classes---------
+  Int_t eventid;//id of ith event in chain.
+  Int_t runnumber;//run period 1->6/7
+  Float_t beamenergy;//e+e- lab energy
+  Float_t beamcmenergy;//e+e- cm energy
+  Int_t goodeventid;//id of ith event saved into Reduced Ntuple
+  TVector3 eep3;//3-momentum vector of e+e- in lab
+  TLorentzVector eep4;//4-momentum of e+e- in lab
+  TVector3 eeVelVec;//velocity vector of e+e- in lab
+  TVector3 beamSpot;//BeamSpot center
+	
+ private:
+   
+};
+  
+
+#endif
+

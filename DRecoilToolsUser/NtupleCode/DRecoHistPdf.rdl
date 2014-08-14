@@ -1,0 +1,65 @@
+/*****************************************************************************
+ * Project: RooFit                                                           *
+ * Package: RooFitCore                                                       *
+ *    File: $Id: DRecoHistPdf.rdl,v 1.1 2009/05/26 18:00:28 benitezj Exp $
+ * Authors:                                                                  *
+ *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
+ *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
+ *                                                                           *
+ * Copyright (c) 2000-2005, Regents of the University of California          *
+ *                          and Stanford University. All rights reserved.    *
+ *                                                                           *
+ * Redistribution and use in source and binary forms,                        *
+ * with or without modification, are permitted according to the terms        *
+ * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
+ *****************************************************************************/
+#ifndef DReco_HIST_PDF
+#define DReco_HIST_PDF
+
+#include "RooAbsPdf.h"
+#include "RooArgSet.h"
+#include "RooSetProxy.h"
+#include "RooAICRegistry.h"
+
+
+class RooRealVar;
+class RooAbsReal;
+class RooDataHist ;
+
+class DRecoHistPdf : public RooAbsPdf {
+public:
+  DRecoHistPdf(const char *name, const char *title, RooArgSet& vars, RooDataHist& dhist, Int_t intOrder=0);
+  DRecoHistPdf(const DRecoHistPdf& other, const char* name=0);
+  virtual TObject* clone(const char* newname) const { return new DRecoHistPdf(*this,newname); }
+  inline virtual ~DRecoHistPdf() { }
+
+  
+  virtual Double_t getVal(const RooArgSet* set=0) const ;
+  virtual Bool_t selfNormalized() const { return kTRUE ; }
+
+  RooDataHist& dataHist()  { return *_dataHist ; }
+  const RooDataHist& dataHist() const { return *_dataHist ; }
+  
+  void setInterpolationOrder(Int_t order) { _intOrder = order ; }
+  Int_t getInterpolationOrder() const { return _intOrder ; }
+
+  Double_t getHistError() const ;
+
+  Double_t evaluate() const;  
+  
+protected:
+
+  RooSetProxy _depList;
+  RooDataHist* _dataHist;  // Unowned pointer to underlying histogram   
+
+
+
+private: 
+
+  Int_t      _intOrder ; // Interpolation order
+
+
+  ClassDef(DRecoHistPdf,1) // Histogram based PDF
+};
+
+#endif

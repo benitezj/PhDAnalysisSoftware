@@ -1,0 +1,64 @@
+/*****************************************************************************
+ * Project: RooFit                                                           *
+ * Package: RooFitCore                                                       *
+ *    File: $Id: DRecoAddPdf.rdl,v 1.2 2009/06/13 00:41:26 benitezj Exp $
+ * Authors:                                                                  *
+ *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
+ *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
+ *                                                                           *
+ * Copyright (c) 2000-2005, Regents of the University of California          *
+ *                          and Stanford University. All rights reserved.    *
+ *                                                                           *
+ * Redistribution and use in source and binary forms,                        *
+ * with or without modification, are permitted according to the terms        *
+ * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
+ *****************************************************************************/
+
+#ifndef DReco_ADD_PDF
+#define DReco_ADD_PDF
+
+
+#include "RooAbsPdf.h"
+#include "RooListProxy.h"
+#include "TH1.h"
+
+
+class DRecoAddPdf : public RooAbsPdf {
+public:
+
+  DRecoAddPdf(const char *name, const char *title,RooArgSet& vars, 
+	    RooAbsPdf& pdf1, RooAbsPdf& pdf2, RooAbsReal& coef1) ;
+  //DRecoAddPdf(const char *name, const char *title, RooArgSet& vars, const RooArgList& pdfList) ;
+  DRecoAddPdf(const char *name, const char *title, RooArgSet& vars, const RooArgList& pdfList, const RooArgList& coefList) ;
+  DRecoAddPdf(const DRecoAddPdf& other, const char* name=0) ;
+  virtual TObject* clone(const char* newname) const { return new DRecoAddPdf(*this,newname) ; }
+  virtual ~DRecoAddPdf() ;
+  
+  virtual Double_t getVal(const RooArgSet* set=0) const ;
+  Double_t evaluate() const ;
+  virtual Bool_t selfNormalized() const { return kTRUE ; }
+  const RooArgList& pdfList() const { return _pdfList ; }
+  const RooArgList& coefList() const { return _coefList ; }
+  Double_t getHistError() const ;
+
+
+  // Create 1,2, and 3D histograms from and fill it
+  TH1* CreateHistogram(const char *name) const ;
+
+protected:
+
+  mutable Double_t _coefCache[100] ; //!  
+
+  RooListProxy _pdfList ;   //  List of component PDFs
+  RooListProxy _coefList ;  //  List of coefficients
+  TIterator* _pdfIter ;     //! Iterator over PDF list
+  TIterator* _coefIter ;    //! Iterator over coefficient list
+  
+  RooArgSet _normvars; 
+
+private:
+
+  ClassDef(DRecoAddPdf,1) // PDF representing a sum of PDFs
+};
+
+#endif

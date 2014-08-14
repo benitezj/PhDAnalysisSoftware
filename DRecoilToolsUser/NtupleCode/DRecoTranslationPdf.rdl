@@ -1,0 +1,70 @@
+/*****************************************************************************
+ * Project: RooFit                                                           *
+ * Package: RooFitCore                                                       *
+ *    File: $Id: DRecoTranslationPdf.rdl,v 1.1 2009/05/26 18:00:29 benitezj Exp $
+ * Authors:                                                                  *
+ *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
+ *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
+ *                                                                           *
+ * Copyright (c) 2000-2005, Regents of the University of California          *
+ *                          and Stanford University. All rights reserved.    *
+ *                                                                           *
+ * Redistribution and use in source and binary forms,                        *
+ * with or without modification, are permitted according to the terms        *
+ * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
+ *****************************************************************************/
+#ifndef DReco_Translation_PDF
+#define DReco_Translation_PDF
+
+#include "Riosfwd.h"
+#include "RooAbsPdf.h"
+#include "RooRealProxy.h"
+#include "RooSetProxy.h"
+#include "RooRealVar.h"
+
+#include "TH1.h"
+
+class DRecoTranslationPdf : public RooAbsPdf {
+public:
+  DRecoTranslationPdf(const char* name, const char* title, RooArgSet& NormVars, RooAbsPdf& pdf, RooRealVar& var, RooRealVar& delta) ;
+  DRecoTranslationPdf(const DRecoTranslationPdf& other, const char* name=0) ;
+
+  virtual TObject* clone(const char* newname) const { return new DRecoTranslationPdf(*this,newname) ; }
+  virtual ~DRecoTranslationPdf() ;
+
+  virtual Double_t getVal(const RooArgSet* set=0) const ;
+  Double_t evaluate() const ;
+  //virtual Bool_t selfNormalized() const { return kTRUE ; }
+  
+  Double_t getHistError() const ;
+
+//   // Create 1,2, and 3D histograms from and fill it
+//   TH1* CreateHistogram(const char *name) const ;
+
+protected:
+
+  RooRealProxy _pdf ;  //  List of PDF components  
+  RooSetProxy _depList;
+//   TIterator* _normvarIter; 
+//   mutable Double_t _Norm;
+
+  RooRealVar* _var; //variable to be translated
+  RooRealVar* _delta; //translation amount
+
+//   mutable Double_t _param[100];
+//   RooArgSet* _parset;
+//   TIterator* _parsetIter;
+
+private:
+
+
+  mutable RooArgSet* nset;
+  
+ //  Bool_t parsChanged() const;
+//   void updateNorm() const;
+
+  ClassDef(DRecoTranslationPdf,1) // PDF representing a product of PDFs
+};
+
+
+#endif

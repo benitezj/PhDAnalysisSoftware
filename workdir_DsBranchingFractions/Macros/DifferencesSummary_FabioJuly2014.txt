@@ -1,0 +1,64 @@
+####################################################################
+Average of BF(Ds->TauNu, Tau->e) + BF(Ds->TauNu, Tau->mu) Average:
+<   y[0]=4.91;//TauNuE
+<   y[1]=5.07;//TauNuMu
+---
+>   y[0]=5.07;//TauNuE
+>   y[1]=4.91;//TauNuMu
+-----
+<   ys[0]=.50;
+<   ys[1]=.48;
+---
+>   ys[0]=.52;
+>   ys[1]=.47;
+---
+<   yt[0]=.66;
+---
+>   yt[0]=.68;
+---
+<     +(y[0]*0.055) * (y[1]*0.034)//signal model (exponential variation)
+<     +(y[0]*0.088) * (y[1]*0.030)//background model (quadratic variation)
+---
+>     +(y[0]*0.055) * (y[1]*0.018)//signal model (exponential variation)    //Jose (July 2014): that comes from table 6.6 & 6.7 row 9
+>     +(y[0]*0.116) * (y[1]*0.096)//background model (quadratic variation)    //Jose (July 2014): that comes from table 6.6 & 6.7 rows 8
+
+
+
+###################################################################
+Lepton Universality (BF(Ds-->TauNu)/BF(Ds-->MuNu)) Macro:
+<   Float_t TauNuEWeight=0.14/(0.14+0.19);
+<   Float_t TauNuMuWeight=0.19/(0.14+0.19);
+---
+>   Float_t TauNuEWeight=0.31;//Jose (July 2014): corrected the weights to the weights from the Average of the Tau->e and Tau->mu 
+>   Float_t TauNuMuWeight=0.69;//Jose (July 2014): corrected the weights to the weights  from the Average of the Tau->e and Tau->mu 
+-----
+<     +(BFTauNuE*0.055) * (BFTauNuMu*0.034)//signal model (exponential variation)
+<     +(BFTauNuE*0.088) * (BFTauNuMu*0.030)//background model (quadratic variation)
+---
+>     +(BFTauNuE*0.055) * (BFTauNuMu*0.018)//signal model (exponential variation)//Jose (July 2014): corrected to match tables in thesis
+>     +(BFTauNuE*0.116) * (BFTauNuMu*0.096)//background model (quadratic variation)//Jose (July 2014): corrected to match tables in thesis
+
+
+
+#############################################################################
+fDs Average Macro:
+<   yt[0]=sqrt(pow(7.7,2)+pow(1.9,2));//add the PDG error 1.9
+<   yt[1]=sqrt(pow(17,2)+pow(1.9,2));
+<   yt[2]=sqrt(pow(14,2)+pow(1.9,2));
+---
+>   yt[0]=7.7;//Jose (July 2014), the 1.9 MeV was being added twice, it was already added in the 7.7 value when it was computed.
+>   yt[1]=17;//Jose (July 2014), the 1.9 MeV was being added twice,
+>   yt[2]=14;//Jose (July 2014), the 1.9 MeV was being added twice,
+---
+>     +(1.9) * (1.9) //Jose (July 2014), the 1.9 MeV was not being added 
+>     +(1.9) * (1.9) //Jose (July 2014), the 1.9 MeV was not being added 
+---
+<     +(y[1]*0.055/2) * (y[2]*0.034/2)//signal model (exponential variation)
+<     +(y[1]*0.088/2) * (y[2]*0.030/2)//background model (quadratic variation)
+---
+>     +(y[1]*0.055/2) * (y[2]*0.018/2)//signal model (exponential variation)//Jose (July 2014), corrected to match the tables
+>     +(y[1]*0.116/2) * (y[2]*0.096/2)//background model (quadratic variation)//Jose (July 2014), corrected to match the tables
+>     +(1.9) * (1.9) //Jose (July 2014), the 1.9 MeV was not being added 
+
+
+

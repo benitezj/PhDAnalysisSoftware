@@ -1,0 +1,467 @@
+# $Id: History,v 1.73 2008/11/26 22:45:26 dubrovin Exp $
+#   
+# This History file is updated automatically with CVS log
+#  
+$Log: History,v $
+Revision 1.73  2008/11/26 22:45:26  dubrovin
+
+Add/modify files for DstD0ToKsKPi skim
+
+Modified Files: SkimTagSequence.cc skimsSPmodes.tcl doc/DstD0ToKsKPiSkim.readme
+New files:      DstD0ToKsKPiPath.tcl DstD0ToKsKPiSkim.hh DstD0ToKsKPiSkim.cc
+
+
+Revision 1.71  2008/08/25 21:22:39  jimh
+Call setPrototype for user data in connection with Skim/Split (Tag V00-20-51)
+
+Revision 1.70  2007/09/22 04:52:11  gapon
+- CLHEP migration: replaced forward declarations for CLHEP classes with
+  direct includes of the corresponding header files. The modification
+  is backward compatible with the old version of CLHEP.
+
+Modified Files:
+	History BToXsllCalcBVars.hh BToXsllCalcLep1Doca.hh
+	BToXsllCalcLep2Doca.hh BToXsllCalcSignal.hh IsrFilter.hh
+
+Igor Gaponenko
+
+
+Revision 1.69  2006/12/10 20:03:57  bartoldu
+
+Resurrect the old BtoXGammaFilter under the name of the clone used on
+the BtoRhoGammaPath, and substitute an instance of that filter for the
+clone.  This restores the behavior of the BtoRhoGamma skims while
+decoupling them from BtoXGamma.
+
+Revision 1.68  2006/10/23 20:59:49  bartoldu
+
+Changes to BtoXGamma{Filter.cc/Path.tcl}:
+- Move utility class for counting cut efficiencies into
+  RecoUtils/FltCounter.hh.
+- Move the BGFMultiHadron cut from tcl (clone) into this filter so it
+  can be accounted for in the tally.
+
+Revision 1.67  2006/10/18 23:04:50  bartoldu
+
+- Re-implemented the BtoXGammaSkim to perform the cuts that are
+  actually used in the fully inclusive b->s gamma analysis.  The
+  previous version would accept BGFMultiHadron or BGFNeutralHadron
+  events and do an e1Mag cut.  The present version requires
+  BGFMultiHadron and performs the cuts described in BAD1491:
+  nGoodTracksLoose >= 3, one photon on GoodPhotonLoose with 1.5 <=
+  Egamma < 3.5 and -0.74 <= cosThetaGamma < 0.93, r2All < 0.7,
+  pTrackMax < 2.5.
+
+Revision 1.66  2006/02/02 18:32:13  kelsey
+Wups.  Per GPDF, tag V00-19-00 due to data member name change.
+
+
+Revision 1.65  2006/02/02 18:31:30  kelsey
+Replace _D,_K with _theD,_theK.  Tag V00-18-04
+
+Revision 1.64  2005/10/27 04:32:27  gowdy
+Update new BToLambda0XX skim (previous renamed from BToLamLamK) to include
+some more modes.
+
+Revision 1.63  2005/10/19 23:34:08  gowdy
+Add BToLamLamK skim.
+
+Revision 1.62  2005/09/29 21:28:55  kelsey
+Updated skimsSPmodes.tcl for Xulnu analysis.  Tag V00-15-04-11 for Analysis-26, private-tag for HEAD
+
+Revision 1.61  2005/04/11 04:07:55  edward
+XSLBtoXulnuFilter: 1. Add separate cosBY cuts for gamma mode.  2. Check for brem recovery overlaps with the lepton and the hadron (or photon).  3.  Add isBGFNeutralHadron to the check, OR'ed with isBGFMH
+
+Revision 1.60  2003/05/05 15:17:31  fnc
+Put HEAD back in place (hopefully!)
+
+Revision 1.58  2003/04/22 23:33:41  echarles
+Fix BtaLoadGHitAssoc for production
+
+Revision 1.57  2003/04/18 00:00:53  echarles
+
+Fix lists names in BSemiExclPath.tcl
+
+Fix include of BtaCandMapper and BtaCandMapFilter in SkimMiniApp
+
+Fix SkimMiniProduction to us micro levelOfDetail
+
+Silence some crap in enableKangaSkim.tcl
+
+Revision 1.56  2003/04/15 14:41:00  fnc
+- Added logic to allow executing paths but not writing out the
+    corresponding collections.
+    Warning: the logic still has to be implemented for KanGA!
+- 2 new skims added:
+    Breco/BFlav_Loose
+    Breco/BFlav_Final
+
+Revision 1.55  2003/04/09 05:24:07  echarles
+Added BtaCandMapFilterModule to SkimMiniApp
+
+Revision 1.54  2003/04/09 05:18:09  echarles
+Changed RooUserCompAllList to RooUserCompAddList in various paths.
+  
+Revision 1.53  2003/04/02 21:03:03  fnc
+Eight skims for sin2beta final sequences added:
+  Charmonium/B0ToccKLoose
+  Charmonium/BchToccKLoose
+  Charmonium/B0ToccKstarLoose
+  Charmonium/BchToccKstarLoose
+  Charmonium/B0ToccKFinal
+  Charmonium/BchToccKFinal
+  Charmonium/B0ToccKstarFinal
+  Charmonium/BchToccKstarFinal
+Two obsolete skims removed:
+  LeptBC/Blnu
+  LeptBC/BToll
+
+Revision 1.52  2002/12/03 10:50:24  fnc
+Mods in V00-05-19:
+o  Breco/BchDKCabibboNonCP skim added (Abi Soffer + Qinglin Zeng)
+o  Two tag bits, B0ToD0KPi and B0ToDstar0KPi, added to BRecoToDKPiPath.tcl (Troels Petersen)
+o  History updated
+
+Revision 1.51  2002/10/21 16:08:08  fnc
+History updated
+
+- L3outCosmic tag bit replaced with DigiFCosmic in AlignClPath.tcl
+
+Revision 1.50  2002/08/29 00:12:28  bartoldu
+
+ Fixed typo in L3CosmicPath.
+
+Revision 1.49  2001/02/03 11:56:08  pds
+Migration of BetaLoadMicroSequence location.
+
+Phil
+
+
+Revision 1.48  2001/01/08 20:48:00  yury
+Mon Jan  8 12:45:32 PST 2001 yury
+
+- Migrated IsrFilter::help to new Fwk interface
+- Added BETAOPTIONS back to bin_FilterTools.mk (why does it keep
+  disappearing ?)
+- Added DamagePath and added a filter to veto damaged events from all
+  other skims
+- Moved definition of sourceFoundFilterTools proc to a separate file
+- Rewrote script to create OPR collections (streamPrecreate.tcl)
+
+Revision 1.47  2000/12/04 06:32:28  yury
+Sun Dec  3 22:31:35 PST 2000 yury
+
+- Added SkimCommonSequence.tcl which ifow now ncludes
+  RecEventControlSequence and RecoBGSkimFilter (filter on tag
+  RecoBGFilter).
+
+Revision 1.46  2000/12/04 02:05:40  gowdy
+Add RecEventControlSequence to all paths. Needed in Elf, does this work
+elsewhere?
+
+Revision 1.45  2000/11/30 05:43:37  yury
+Wed Nov 29 21:42:18 PST 2000 yury
+
+- Added  configureStreams.tcl and streamPathSetup.tcl which configure
+  Objy streams for Bear/Elf
+- Adapted various tcl files accordingly
+
+Revision 1.44  2000/11/08 17:23:44  pds
+Another migration of BtaCompositeCand to BetaMicroBase.
+
+phil
+
+Revision 1.43  2000/09/08 00:20:22  yury
+Thu Sep  7 17:19:07 PDT 2000 yury
+
+- Support Kanga input which is triggered by SkimInputkanga env
+  variable. There is a problem setting new tag variables that is
+  internal to Kanga
+
+
+Revision 1.42  2000/08/24 22:11:12  weaver
+Added DSemiLeptonicPath definition
+
+24th Aug 2000: Matt Weaver
+	Added DSemiLeptonicPath.tcl path definition and reference in
+	defineTagPaths.tcl.  No new filter module was necessary.
+
+Revision 1.41  2000/08/24 17:25:35  jback
+24th Aug 2000: John Back
+	Changed the minNoOfTracks cut in the 3body tcl files such that
+	they are equal to the number of charged tracks on the CP side + 1 (for the
+	tag side). We use the conservative estimate of 1 track for each Ks.
+
+
+Revision 1.40  2000/08/23 12:45:50  jback
+23rd Aug 2000; John Back
+	Changed the B3bodyTagFilter module to filter events based on the new
+	charmless three-body tag bits made from EventTagTools/TagB3body.
+	Added appropriate tcl files for the ten different streams. Removed
+	obsolete filtering modules and associated tcl files. Documentation
+	about the new tag/filtering three-body charmless skims and their
+	performance can be seen at :
+
+	http://www.slac.stanford.edu/BFROOT/www/Physics/Forum/forum/phonemeetings/forum_22aug00/docs/B3body.html
+
+Revision 1.39  2000/08/21 09:43:03  yury
+Mon Aug 21 02:42:29 PDT 2000 yury
+
+- Turn off SkimMicroApp which is not needed anymore
+
+
+Revision 1.38  2000/08/18 17:04:38  yury
+Fri Aug 18 10:03:49 PDT 2000 yury
+
+- First implementation for the Fall skims. SkimTagWriteApp now runs
+  PhsyProdSequence, followed by user paths defined in defineTagPaths.tcl
+
+Revision 1.37  2000/06/27 04:44:40  yury
+Mon Jun 26 21:42:12 PDT 2000 yury
+
+- Handle input tcl files in addition to input collections
+
+Revision 1.36  2000/06/22 00:14:21  yury
+Wed Jun 21 17:14:00 PDT 2000 yury
+
+- Fixed SkimMCMicro option too
+
+Revision 1.35  2000/06/21 22:24:23  yury
+Wed Jun 21 15:24:03 PDT 2000 yury
+
+- Corrected handling of MCAll option
+
+Revision 1.34  2000/06/16 07:58:40  yury
+Fri Jun 16 00:57:56 PDT 2000 yury
+
+- Corrected a bug (benign in production, fortunately) in D* skim setup
+- Corrected a typo in Fernando's commit
+
+Revision 1.33  2000/06/14 04:04:43  yury
+Tue Jun 13 21:03:04 PDT 2000 yury
+
+- Reconfigured executables according to agreements between
+  Dstar/BReco/Charmonium AWGs et al (e.g. kill all slow streams)
+- Set transaction commit interval to 10 min
+
+Revision 1.32  2000/06/07 07:16:30  yury
+Wed Jun  7 00:15:44 PDT 2000 yury
+
+- Fixed a couple of memory leaks and cleaned up some sloppy coding
+
+Revision 1.31  2000/05/31 23:54:58  yury
+Wed May 31 16:54:01 PDT 2000 yury
+
+- Corrected bug in BPiDstarMicroFilter which showed up as a warning on OSF
+- Renamed (yet again) TagJPsi to TagPsi expected by scripts
+
+Revision 1.30  2000/05/26 22:39:19  yury
+Fri May 26 15:38:02 PDT 2000 yury
+
+- Got rid of useless help() and [begin|end]Run() methods which should
+  help with Framework migration
+- Moved AllEvents stream to defineTagWritePaths.tcl so it picks up new
+  tag bits
+- Added MultiHadron stream
+
+Revision 1.29  2000/05/23 17:15:48  yury
+Tue May 23 10:11:27 PDT 2000 yury
+
+- Moved D* paths from SkimTagApp to SkimTagWriteApp and added micro
+  sequences to them
+- Renamed TagJpsi, InclDstarDstarFilter, and InclDstarDsFilter modules
+  to make it consistent with TagProdCreateSequence
+
+Revision 1.28  2000/05/17 21:30:56  yury
+Wed May 17 14:28:59 PDT 2000 yury
+
+- Added InclDstarDstarPath and InclDstarDsPath for IHBD AWG
+- Removed CompProdCreateSequence from JpsiLoosePath, added
+  CompPsiProdSequence
+- Added KllPath to SkimMicroSequence and defineMicroPaths
+- Added AWG name (RadPenguin) to BtoXGamma collection name
+
+Revision 1.27  2000/04/29 22:32:54  yury
+Sat Apr 29 15:32:28 PDT 2000 yury
+
+- Updated name of the kaon list in DcToKpipiMicroFilter.cc
+
+Revision 1.26  2000/04/29 00:46:43  echarles
+
+Fixed name mismatch is B3bodyKspi0Path.tcl
+
+Revision 1.25  2000/04/28 23:06:29  echarles
+
+Changes B03bodyCompProdCreateSequence to B03bodyKsCompProdCreateSequence
+to avoid name duplication.
+
+Revision 1.24  2000/04/11 09:09:28  yury
+Tue Apr 11 02:04:30 PDT 2000 yury
+
+- Updated DcToKpipiMicroFilter
+
+Revision 1.23  2000/04/10 19:26:49  yury
+Mon Apr 10 12:25:43 PDT 2000 yury
+
+- Added Dc filters from Roy, cleanef up BPiDstar filters a bit
+
+Revision 1.22  2000/03/23 03:02:48  yury
+Wed Mar 22 19:02:35 PST 2000 yury
+
+- Fixed Objy output
+
+Revision 1.21  2000/03/22 21:04:36  yury
+Wed Mar 22 13:03:47 PST 2000 yury
+
+- Remove RooOutputSequence.tcl and put back the manual "set outputStream"
+  The former version broke Objy output
+
+Revision 1.20  2000/03/22 18:51:49  yury
+Wed Mar 22 10:50:39 PST 2000 yury
+
+- Source RooOutputSequence.tcl and BdbOutputSequence.tcl explicitely
+- Trap unknown streams passed via JOB_STREAMS variable
+
+Revision 1.19  2000/03/20 21:06:27  yury
+Mon Mar 20 13:04:37 PST 2000 yury
+
+- Added *Sequence files for all three applications. Makes it easier to
+  mix and match paths, e.g. add tag paths to micro app to make KanGA
+  collections
+
+Revision 1.18  2000/03/20 08:07:56  yury
+Mon Mar 20 00:07:35 PST 2000 yury
+
+- Fixed a bug in ExclEtaPFilter that caused it pass every event
+
+Revision 1.17  2000/03/17 03:09:09  yury
+Thu Mar 16 19:05:16 PST 2000 yury
+
+- Added BtaGoodTrackSequence to B03bodyPath
+- Added BPCPath.tcl which implements common features of BPC paths
+- Fixed InclDstRhoPath
+
+Revision 1.16  2000/03/11 10:52:38  yury
+Sat Mar 11 02:50:32 PST 2000 yury
+
+- Rewrote BPC paths
+- Few bug fixes in users' cc files
+- Rewrote tcl to adapt David's env variable scheme
+- Added (apparently unsuccessfully) KanGA support
+- Added an empty path to be used for Bdb->KanGA conversion
+
+Revision 1.15  2000/03/10 17:43:12  yury
+Fri Mar 10 09:42:01 PST 2000 yury
+
+- Added tag filters to TauQEDPath.tcl
+- Removed extra EvtCounters from BReco paths -- they are provided by
+  the parent script
+- Added defineTagWritePaths.tcl and moved TauQED path there
+
+Revision 1.14  2000/03/07 23:35:58  yury
+Tue Mar  7 15:35:16 PST 2000 yury
+
+- Cleaned up some more old modules
+- Added type 3 executable (read tag+micro, write new tag)
+
+Revision 1.13  2000/03/07 12:35:58  yury
+Tue Mar  7 04:35:17 PST 2000 yury
+
+- First attempt at putting together centralized skim apps
+
+Revision 1.12  2000/03/04 23:28:35  echarles
+
+switch from Eraw to Ecal
+
+Revision 1.11  2000/02/05 07:58:09  yury
+Fri Feb  4 23:56:35 PST 2000 yury
+
+- Put BETAOPTIONS into bin_FilterTools.mk
+
+Revision 1.10  2000/02/04 21:43:04  bbrprod
+Fri Feb  4 13:41:56 PST 2000 yury
+
+- Updated AppUserBuilds and scripts to new (>8.5.2) verison of BetaSequences.
+  Not all scripts are tested yet.
+
+Revision 1.9  2000/01/14 19:20:40  abi
+- Fixed a bug in DstarRhoSkim.tcl (Pi0ToGG_Loose was accidentally disabled).
+- Increased histogram limits and changed cuts a bit in BRhoDstarMicroFilter.cc.
+  This module is 58% efficient on signal, with 25% of the events failing cuts
+  (the rest due to reconstruction efficiency only).
+  Only 1 event passed out of 165 data events.
+  CPU time per event used by the relevant modules is:
+
+  module		On signal MC (ms)		On data (ms)
+  ----------------------------------------------------------------------
+  Pi0ToGG_Loose  	192.50000 			46.00000
+  Pi0ToGG_DefaultMass	98.55000 			26.78788
+  RhoCToPiPi0_Default	463.25000			98.60606
+  BRhoDstarMicroFilter	5.95000				2.42424
+  Total			760.25				173.81818
+
+Revision 1.8  2000/01/13 21:21:04  abi
+- Added BRhoDstarMicroFilter and DstarRhoSkim to skim for B->D* rho,
+  partial reconstruction.
+
+Revision 1.7  1999/09/28 21:05:32  yury
+Tue Sep 28 13:59:55 PDT 1999 yury
+
+- Minor cleanup in the Francesco's code
+- Activated BtaTagMuonFilter in TagFilterSequenceMumu
+- Removed L3Out* filters
+
+
+Revision 1.6  1999/08/06 20:34:19  yury
+Fri Aug  6 13:40:47 PDT 1999 yury
+
+- Fixed hbook overflow problem in making K0s list
+
+Revision 1.5  1999/08/01 00:40:36  bbrprod
+Sat Jul 31 17:38:25 PDT 1999 yury
+
+- Updated  bdbSkim.tcl script to precreate output collection in one
+  transaction
+
+Revision 1.4  1999/07/29 20:14:44  yury
+Thu Jul 29 13:14:12 PDT 1999 yury
+
+- Move to "skimEvent" option of BdbEventOutput
+
+Revision 1.3  1999/07/06 05:01:17  yury
+Mon Jul  5 21:59:21 PDT 1999 yury
+
+- Updated scripts and sequences for 8.1.10d OPR collections
+- Added BtaMicroMuonFilter to help cope with runs which have tag
+  corrupted tags (due to incorrect PEP info)
+
+Revision 1.2  1999/06/10 23:34:39  yury
+Thu Jun 10 16:32:25 PDT 1999 yury
+
+- Added scripts that define filter paths and the main setup
+
+Revision 1.1  1999/06/07 01:39:34  yury
+Sun Jun  6 18:37:43 PDT 1999 yury
+
+- Removed old Beast filters (tagged CLEANUP beforehand), added new tag
+  and microDB-based filters and FilterToolsApp application
+
+6th  June  1999.   Tagged the head of the package CLEANUP, then
+		   removed old Beast filters. Added tag and microDB
+		   filters, updated AppUserBuild.cc, will tag V00-01-00
+
+17th March 1998.   V00-00-03 tagged for release 6.3.0
+                   Compiles and builds on AIX and Sun
+                   Pi0PI0Filter and MUMUFilter made to compile, but will
+                   not work. Will fix for next release.
+                   Otherwise standard code for MDC1 filtering.
+18th March 1998.   V00-00-04 tagged for release 6.3.0 rebuild.
+                   Fix compile error in Pi0PI0Filter (not sure why it
+                   didn't work before).
+                   Compiles and builds on AIX and Sun.
+14th April 1998    V00-00-05 tagged for release 6.5.0.
+                   Do CLHEP Migration (one release late).
+
+
+
+

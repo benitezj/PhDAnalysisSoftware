@@ -1,0 +1,71 @@
+/*****************************************************************************
+ * Project: RooFit                                                           *
+ * Package: RooFitCore                                                       *
+ *    File: $Id: DRecoProdPdf.rdl,v 1.1 2009/05/26 18:00:28 benitezj Exp $
+ * Authors:                                                                  *
+ *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
+ *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
+ *                                                                           *
+ * Copyright (c) 2000-2005, Regents of the University of California          *
+ *                          and Stanford University. All rights reserved.    *
+ *                                                                           *
+ * Redistribution and use in source and binary forms,                        *
+ * with or without modification, are permitted according to the terms        *
+ * listed in LICENSE (http://roofit.sourceforge.net/license.txt)             *
+ *****************************************************************************/
+#ifndef DReco_PROD_PDF
+#define DReco_PROD_PDF
+
+#include "Riosfwd.h"
+#include "RooAbsPdf.h"
+#include "RooListProxy.h"
+
+#include "RooSetProxy.h"
+
+#include "TH1.h"
+
+class DRecoProdPdf : public RooAbsPdf {
+public:
+  DRecoProdPdf(const char* name, const char* title, RooArgSet& NormVars, RooAbsPdf& pdf1, RooAbsPdf& pdf2, Double_t cutOff=0) ;
+  DRecoProdPdf(const DRecoProdPdf& other, const char* name=0) ;
+
+  virtual TObject* clone(const char* newname) const { return new DRecoProdPdf(*this,newname) ; }
+  virtual ~DRecoProdPdf() ;
+
+  virtual Double_t getVal(const RooArgSet* set=0) const ;
+  Double_t evaluate() const ;
+  //virtual Bool_t selfNormalized() const { return kTRUE ; }
+  
+  Double_t getHistError() const ;
+
+  // Create 1,2, and 3D histograms from and fill it
+  TH1* CreateHistogram(const char *name) const ;
+
+protected:
+
+  Double_t _cutOff ;       //  Cutoff parameter for running product
+  RooListProxy _pdfList ;  //  List of PDF components
+  TIterator* _pdfIter ;    //! Iterator of PDF list
+  
+  RooSetProxy _depList;
+  RooArgSet* _normvars;
+  TIterator* _normvarIter ; 
+  mutable Double_t _Norm;
+  
+
+  mutable Double_t _param[100];
+  RooArgSet* _parset;
+  TIterator* _parsetIter;
+
+private:
+
+
+
+  Bool_t parsChanged() const;
+  void updateNorm() const;
+
+  ClassDef(DRecoProdPdf,1) // PDF representing a product of PDFs
+};
+
+
+#endif

@@ -1,0 +1,9 @@
+h/file 1 d0_pi.his
+vec/crea y(300)
+hi/get_vec/cont 123 y
+vec/print y
+vec/write y 'cont.lis' ! 'oc'
+close 1
+
+*1.950 3.445 5MeV
+

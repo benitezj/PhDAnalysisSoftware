@@ -1,0 +1,328 @@
+
+      $Id: README,v 1.80 2005/02/28 16:37:48 kelsey Exp $
+
+THE WORKDIR PACKAGE             Mod history at bottom
+-------------------
+
+Workdir is a package from which you can run BaBar executables in a simple 
+way. Input and output are local to the workdir directory, and the 
+whole directory tree can be moved out of the release directory tree 
+you obtained it in and into a stable, personal working area, eg. ~/workdir, 
+where it can thereafter be used with a user-selectable release directory. 
+The RELEASE link points to the selected directory. This way you can work 
+in a stable environment and switch between releases as you please.
+
+Problems, comments, questions to the PC of the package.
+
+Setup:
+------
+
+  addpkg workdir
+  cd workdir
+  gmake setup   (to use workdir with the current release directory = ../) OR
+  gmake setup RELDIR=<release directory>
+                (see 'gmake help' for gmake options)
+
+Help:
+-----
+
+  README file
+  'gmake help'
+  'betarun help'
+  
+Running root:  (from within workdir)
+
+-------------
+
+  bbrroot
+
+    This script (installed in bin/$BFARCH from the RooUtils package)
+    uses the version of ROOT used to build release, and ignores
+    the value of the ROOTSYS environment variable (if any was set).
+
+    During startup from workdir, ROOT will read the .rootrc file
+    which configures the macro and shared library paths to look for
+    files in the current test and production releases (in that order).
+    It will also process the RooAlias.C and RooLogon.C files to initialize
+    a standardized ROOT session for working within a BaBar release.
+
+    Edit RooLogon.C in your workdir to customize which BaBar libraries
+    you want to use (see the comments for details). None are loaded
+    by default. Note that ROOT shared libraries are not currently built in
+    a production release so you must now check out each package you want
+    to use and build its library with "gmake <pkg>.rootlib ROPT=-Shared".
+
+    Use the "BABAR" style and the BABARLabel() or BABARSmartLabel() 
+    functions to create BaBar approved plots:
+
+      gROOT->SetStyle("BABAR");
+      ...
+      BABARLabel();  -- or --  BABARSmartLabel();
+
+Running other executables:
+--------------------------
+
+  'gmake setup' generates a link bin->RELEASE/bin so that executables you
+  have generated in your release directory pointed to by RELEASE are on
+  the standard SRT path.
+
+Migrating workdir to a stable personal work area
+------------------------------------------------
+
+  gmake migrate TODIR=dirname
+     eg. 'gmake migrate TODIR=~/workdir' will move the tree to ~/workdir.
+
+Files, directories, links in workdir
+------------------------------------
+
+  GNUmakefile   makefile to manage links (eg. to the release directory),
+                migrate workdir to a stable private area, etc.
+
+  RELEASE       link to the release directory of choice. Defaults to ../
+                Is set by 'gmake setup [RELDIR=dir]'
+
+  kumac         directory of useful kumac macros
+
+Modification history
+--------------------
+28 Feb 2005 M. Kelsey
+- Fix "clean" target in GNUmakefile to remove all official symlinks.
+
+09 Dec 2004 M. Kelsey (note added here 28 Feb 2005)
+- Add kumac/bbrpath.kumac to implement BaBar path searching in PAW.
+
+13 Oct 2004 M. Kelsey
+- Add dummy "allbin" target to GNUmakefile to suppress spurious error.
+
+2 Sep 2003 Stephen J. Gowdy
+- Update migrate target so that it does not copy the CVS directory
+- Update migrate target so that it uses gtar instead of tar
+
+26 Mar 2002 Peter Elmer
+- Removed betaScript.tcl (I think this is obsolete, it is still in CVS
+  if somebody wants it)
+- Moved 'betarun' to BetaUser (and added it to BINSCRIPTS there)
+
+8 Feb 2002 David Norvil Brown
+- Removed soft link to GraDisplay setup by gmake setup.  Removed disprun 
+  script (moved to GraDisplay package).
+
+8 Feb 2002 Peter Elmer
+- Cleaned out obsolete bbsim flotsam and jetsam, cleaned up README a bit
+
+23 Apr 2001  Eric Charles
+- added BtaCutTools to betaLoad() macro
+
+23 Apr 2001  Eric Charles
+- added BetaMicroTruth to betaLoad() macro
+
+06 Apr 2001  Eric Charles
+- remove loadLib("g++") from betaLoad() macro 
+
+16 Feb 2001  Eric Charles
+- added BBRROOTPATH to .rootrc
+- added betaLoad() macro in RooAlias to load all beta + kanga shared
+  libraries
+
+2001/02/19  Alexandre (Sasha) Telnov
+- Made BABARSmartLabel() work with older versions of ROOT; added left-edge 
+justification; added more online help.
+
+2000/12/07  Alexandre (Sasha) Telnov
+- Added ability to add arbitrary text, including mathematical formulae, 
+under the "BaBar" label using BABARSmartLabel().
+
+2000/12/05  Alexandre (Sasha) Telnov
+- Added function BABARSmartLabel() for making BABAR approved plots.
+Unlike BABARLabel(), which was kept unchanged to avoid breaking existing
+macros, BABARSmartLabel() produces consistenly good results no matter what 
+the ratio the pad's sides is. 
+
+10 July 2000  David Norvil Brown
+- modify disprun to better take advantage of new Beta-based executable.
+
+V00-04-03 David Kirkby
+- fine tuning of the ROOT support for BABAR approved plots
+
+V00-04-02 David Kirkby
+- modify RooAlias.C RooLogon.C to add support for creating BaBar approved plots
+
+V00-04-01 Urs Langenegger
+- Add an entry into the RootMacroPath in .rootrc
+
+V00-04-00 Chih-hsiang Cheng
+- Remove file asrun and links/files generated by gmake setup DECAY.DEC, 
+  pdt.table, and QaReco.cards
+
+V00-03-26 Terry Hung
+- For online test release, add soft link workdir/ONLINEPARENT pointing to the
+online production release. This is procedure 1) of the 'filename search
+order technology' proposed by gpdf
+
+V00-03-25 David Kirkby
+- add startup files .rootrc RooAlias.C RooLogon.C for running ROOT from workdir
+
+V00-03-24 Lockman
+- moved matscan.db, matscan.ffr, matscan.tcl to gnutil/mats/ V00-05-20
+- moved bogus.tcl to Bogus V00-05-05
+
+V00-03-23 Lockman
+- added matscan.db, matscan.ffr and matscan.tcl to make it simpler to run the
+  material scanner
+
+V00-03-22 contributed by Lockman, WTF
+- prod.db: mat variable explicitly put in debug struct
+- bogus.tcl: made fast-param-Pcone the default model
+- betarun: fixed check on $BetaAslund environment variable
+
+V00-03-21 contributed by gowdy
+- GNUmakefile: removed include SoftRelTools/standard.mk
+
+V00-03-20 09-Sep-1999 Georges Vasseur
+    modified GNUmakefile in order to add corneliusEvent call from setup
+
+V00-03-19 25-Jun-1999 Gabriele Cosmo
+    updated comments in bogus.tcl. 
+
+V00-03-18 25-May-1999 Gabriele Cosmo
+    updated bogus.tcl. Set default verbosity to false for all subsystems.
+    Set ID for SVT parameterized model to "fast-param".
+
+V00-03-17 12-Apr-1999 Lockman
+    made run struct an identical copy of the one in gnbase/run.db to avoid
+    confustion. fld_flg (the magnetic field flag) is now present.
+
+V00-03-16 02-Apr-1999 Gabriele Cosmo
+    removed files bogusrun and bogusrun.db
+    
+V00-03-15 29-Mar-1999 Lockman
+    modified bogus.tcl, bogusrun.db
+
+V00-03-14 26-Feb-1999 Lockman
+    added new call_list.dat with corrected length for inner RPC
+
+V00-03-13 24-Feb-1999 Gabriele Cosmo
+    updated bogusrun.db and added bogus.tcl to cope with the new run-control
+    mechanism in Bogus
+
+V00-03-12 10-Feb-1999 Lockman
+    - prod.db added 
+    structure run
+      int profile_step 1  !  =1: profile stepping times    
+    end run
+V00-03-11 10-Feb-1999 Lockman 
+    - prod.ffr : added QAFLAG 2 to switch on QA histograms 
+    - prod.db  : for running backgrounds, I added 
+structure bpuse
+    int use_bkgd 1
+end bpuse
+
+V00-03-10 Stephane Plaszczynski Feb. 03, 1999
+    modified GNUMakefile in order to remove Cornelius call from setup
+V00-03-09 Anders Ryd 02-Feb-1999
+    add prod.db and prod.ff
+    prod.db is a database file for bbsim that will be used in production
+    and to ensure that the same result is obtained wen running in workdir
+    we have out this file here. prod.db should succed runtime.db but
+    right now both are needed.
+    Similar for prod.ffr, this contains the ffread cards for running bbsim,
+    it will replace sample.cards, but both are needed at the moment.
+V00-03-08 Lockman 02-Feb-1999
+    re-added call_list.dat
+V00-03-07 Gabriele Cosmo Jan. 20, 1999
+    updated version of bogusrun.db
+          Stephane Plaszczynski Jan. 21, 1999
+    add Cornelius++ setup in GNUmakefile
+V00-03-06 LOCKMAN Jan. 7, 1999
+    removed dirc structure altogether
+V00-03-05 Rankin Jan 6th , 1999
+    Modified runtime.db to set SOB=0 to supress photon tracking in dirc"
+V00-03-04 R. Jacobsen Dec 13, 1998
+    Updated GNUmakefile to make sure there is a link to the file 
+    that defines a magnetic field map
+V00-03-02 Yu. Kolomensky, October 1, 1998
+    Added more files needed for Aslund running
+V00-03-01 R. Jacobsen August 2,1998
+    In betarun fix needed for non-Aslund running, now that various files
+    have been removed
+V00-03-00 C. Cheng July 21,1998
+    Removed js74_babar.jetd, gen_bb.ffr, gen_cont.ffr, results/ and the links
+    DchGeom.data, Aslund, asdata, EmcData, EmcEnv, SvtReco, stablepart.dat, 
+    Bogus in GNUmakefile 
+V00-02-07 P. Kim   Apr 22, 1998
+    Added sob in dirc structure to runtime.db
+V00-02-06 P. Kim  03/19/1998
+    pdg.table removed from the GNUmakefile. 
+    All Babar software use pdt.table instead.  
+    Updated sample.cards
+    D.N. Brown II (Louisville) 20 Feb. 1998
+    Added disprun script.
+V00-02-05 C. Cheng 02/20/98
+    Added a empty directory "results" for proper functioning of the
+    Trigger codes.
+V00-02-04 M. Benkebil 09 Dec. 1997
+    Update again the README file
+V00-02-03 M. Benkebil 09 Dec. 1997
+    extended to support QaRecoTools package
+    The GNUmakefile setup the environement for QaRecoTools.
+V00-02-02 P. Kim 10/23/97
+    Added gen_bb.ffr and gen_cont.ffr for BB-bar and Continuum
+    js74_babar.jetd for mods. to Jetset table
+V00-02-01 E. Frank 06Oct97
+  - record this tag and release charlies fix.
+CY-SunOS5 C. Young 9/26/97
+  - made "ln -f -s" instead of "ln -s -f" in GNUmakefile to satisfy SunOS5.
+V00-02-00 T. Wenaus 6/13/97
+  - extended to support Bogus. Makefile creates Bogus link; bogusrun
+    command added.
+V00-01-22 T. Wenaus 4/30/97
+  - Bob Jacobsen: GNUmakefile mod to create asdata link
+V00-01-21 T. Wenaus 4/22/97
+  - undo an overly hasty and ill-advised change of BFDIST->BFROOT/dist
+V00-01-20 T. Wenaus 4/21/97
+  - provide EvtGen files DECAY.DEC, PART.DAT, PROBMAX.DAT in setup
+    (links to PACKAGE/)
+  - add GNPN 1 to sample.cards; GENP printout for first event only
+V00-01-19 T. Wenaus 4/14/97
+  - after a 'gmake migrate' warn that 'gmake setup' is needed in the
+    current workdir directory.
+V00-01-18 T. Wenaus 4/1/97
+  - on the suggestion of David Aston, have 'gmake setup' generate a link
+    bin -> RELEASE/bin so that executables you generate in your area
+    are on the standard SRT path.
+V00-01-17 M. Benkebil 3/27/97
+  - The following line in GNUmakefile has been changed:
+           rm -f Aslund; if [ -r Aslund ] ; then \
+    to : rm -f Aslund; if [ -r RELEASE/Aslund ] ; then \
+V00-01-16 M. Benkebil 3/25/97
+  - M. Benkebil 3/25/97 Added cp Aslund/emres_current.hist 
+    asdata/emres_current.hist to asrun
+  - T. Wenaus 3/4/97 set aslundgeom=0 (Aslund geometry generation off) \
+    by default in runtime.db
+V00-01-15  T. Wenaus 3/3/97
+  - sample.cards restored to 3 event run
+  - e, gamma cuts set to 100keV and mu, hadronic set to 1MeV in sample.cards
+  - sample.cards restored to using BEGET default
+V00-01-08 to V00-01-14: nobody bothered recording changes. Grrrrr.
+V00-01-07  T. Wenaus 11/7/96
+  - R. de Sangro 10/10/96 added -deb option to asrun
+  - B. Jacobsen 11/2/96 modified GNUmakefile todd various datafile
+              links when doing a gmake setup
+  - B. Jacobsen 9/20/96 added -exe option to betarun for regression tests
+V00-01-06  B. Jacobsen 8/22/96 
+  - added script.tcl, words about betarun
+V00-01-05  T. Wenaus 8/17/96
+  - add 'data' parameter to dbio structure, controlling I/O of
+    derived data block (defaulted to OFF)
+  - compare only first 3 chars of BFARCH (T. Hung)
+V00-01-04
+  - fix in asrun: runtime.db references eliminated
+V00-01-03  T. Wenaus 4/1/96
+  - sample.cards much expanded
+  - runtime.db expanded with better defaults (eg. ecal clustering
+    off by default)
+V00-01-02  T.Wenaus  2/23/96
+  - 'q', 'quit' aliased to 'exit' in glogon
+  - postscript printing kumacs added
+V00-01-01  T.Wenaus  2/96
+  Initial release

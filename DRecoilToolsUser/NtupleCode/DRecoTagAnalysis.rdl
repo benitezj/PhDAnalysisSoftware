@@ -1,0 +1,424 @@
+#ifndef DRecoTagAnalysis_hh
+#define DRecoTagAnalysis_hh
+
+#include "DRecoEvtAnalysis.hh"
+
+#include "DRecoTagOptimizer.hh"
+
+#include "TCut.h"
+#include "RooRealVar.h"
+#include "RooArgList.h" 
+
+#define PiPDGMass       0.139570 
+#define KPDGMass        0.49368 
+#define K0PDGMass       0.49767
+#define DstarPDGMass    2.009936 //charged
+#define Dstar0PDGMass   2.00662
+#define D0PDGMass       1.864847 //1.8645=old mass
+#define DPlusPDGMass    1.8693 
+#define DsPDGMass       1.9693
+#define DsStPDGMass     2.112
+#define LambdaCPDGMass  2.2849 
+#define Pi0PDGMass      0.134976
+#define ElectronPDGMass 0.000510999
+#define MuonPDGMass     0.1056584
+#define ProtonPDGMass   0.9382723
+#define EtaPDGMass      0.54784 
+
+#define myDstarLund        413
+#define myDstar0Lund       423
+#define myD0Lund           421
+#define myDPlusLund        411
+#define myDsLund           431
+#define myDsStLund         433
+#define myLambdaCLund      4122
+#define myKLund            321
+#define myKS0Lund          310
+#define myKstar0Lund       313
+#define myPiLund           211
+#define myPi0Lund          111
+#define myPhiLund          333
+#define myRhoCLund         213
+#define myRho0Lund         113
+#define myEtaLund          221 
+#define myEtaPLund         331
+#define myF0Lund           10221
+#define myPLund            2212
+#define myLzLund           3122
+#define mySzLund           3212
+#define myGammaLund        22
+#define myELund            11
+#define myMuLund           13
+#define myNuELund          12
+#define myNuMuLund         14
+#define myD2420ChargedLund 10413
+#define myD2420NeutralLund 10423
+
+#define OnPeakEnergy 10.58 
+#define OffPeakEnergy 10.54
+
+#define MAXNCANDS   40
+#define NMAXTAG     80
+#define NMAXGAM    480
+#define NMAXPI0    200
+#define NMAXPI     440
+#define NMAXK       80
+#define NMAXKS      80
+#define NMAXETA     40 
+#define NMAXETAP    40
+#define NMAXRHOC    40
+#define NMAXRHO0    40
+#define NMAXPHI     40
+#define NMAXKSTAR0  40
+#define NMAXP       40
+#define NMAXSIG0    40
+#define NMAXLAM0    40
+
+#define NTagTypes 4
+
+
+class DRecoTagAnalysis:public DRecoEvtAnalysis{
+  ClassDef(DRecoTagAnalysis,1);
+
+public:
+  DRecoTagAnalysis(Int_t DataType,TString OutputDir);
+  ~DRecoTagAnalysis();
+
+
+  //
+  void SetTagReduceCuts(Int_t _cuttagmass, 
+		        Int_t _cuttagpstar,
+		        Int_t _cuttagvtxprob,
+		        Int_t _cuttagmode){
+    cuttagmass=_cuttagmass;
+    cuttagpstar=_cuttagpstar;
+    cuttagvtxprob=_cuttagvtxprob;
+    cuttagmode=_cuttagmode;
+  }
+  //virtual Int_t ReduceNtuple();
+  Int_t ReduceNtuple();
+  
+  Int_t MakeTagMassPlots();
+  Int_t DrawTagMassPlots(); 
+  Int_t DrawTagMassPlotsAll();   
+  Int_t OptimizeCuts(Int_t mode,Float_t lowMassValue,Float_t lowPminValue,Float_t lowPidKMin);
+  Int_t DrawOptimizeCuts();
+  Int_t DrawOptimizeCutsAll();
+  
+  Int_t MakeDstarMass();
+  Int_t DrawDstarMass();
+
+  void SetStartAndStopFiles(Int_t _startfile,
+                            Int_t _endfile){
+    startfile=_startfile;
+    endfile=_endfile;
+  }
+	
+protected:
+  
+  Bool_t FillTagEventVars();
+  Bool_t TagEvtPassesCuts();
+  
+  Bool_t FillTagVars();  
+  Int_t SetTagBranches();
+  Int_t MakeTagReducedNtupleBranches();
+
+  Int_t cuttagmass;
+  Int_t cuttagpstar;
+  Int_t cuttagvtxprob;
+  Int_t cuttagmode;
+  Bool_t TagPassesCuts();
+
+  RooRealVar mass;
+
+  //tag description, 
+  Int_t nTagModes[NTagTypes];  
+  TString TagNames[NTagTypes][10];
+  Float_t TagMean[NTagTypes][10];
+  Float_t TagWidth[NTagTypes][10];
+  
+  //chain branches
+  Int_t   nTag;
+  Float_t TagMass[NMAXTAG];  
+  Float_t TagMassErr[NMAXTAG];  
+  Float_t Tagp3CM[NMAXTAG];  
+  Float_t TagcosthCM[NMAXTAG];  
+  Float_t TagphiCM[NMAXTAG];  
+  Float_t TagenergyCM[NMAXTAG];  
+  Float_t TagChi2[NMAXTAG];
+  Int_t   TagnDof[NMAXTAG];  
+  Int_t   TagVtxStatus[NMAXTAG];
+  Float_t TagVtxx[NMAXTAG];  
+  Float_t TagVtxy[NMAXTAG];  
+  Float_t TagVtxz[NMAXTAG];  
+  Int_t   TagLund[NMAXTAG];  
+  Int_t   TagnDaus[NMAXTAG];
+  Int_t   Tagd1Lund[NMAXTAG];  
+  Int_t   Tagd1Idx[NMAXTAG];  
+  Int_t   Tagd2Lund[NMAXTAG];  
+  Int_t   Tagd2Idx[NMAXTAG];   
+  Int_t   Tagd3Lund[NMAXTAG];  
+  Int_t   Tagd3Idx[NMAXTAG];
+  Int_t   Tagd4Lund[NMAXTAG];  
+  Int_t   Tagd4Idx[NMAXTAG];
+  Int_t   Tagd5Lund[NMAXTAG];  
+  Int_t   Tagd5Idx[NMAXTAG];
+  Float_t TagFlightBSLen[NMAXTAG];
+  Float_t TagFlightBSErr[NMAXTAG];
+  Int_t   TagMCIdx[NMAXTAG];
+  
+  Int_t   nPi;
+  Float_t PienergyCM[NMAXPI]; 
+  Float_t Pip3CM[NMAXPI]; 
+  Float_t PicosthCM[NMAXPI]; 
+  Float_t PiphiCM[NMAXPI]; 
+  Int_t   PiLund[NMAXPI];   
+  Int_t   PiMCIdx[NMAXPI];
+  Int_t   PiTrkIdx[NMAXPI]; 
+
+  Int_t   nK;
+  Float_t Kp3CM[NMAXK]; 
+  Float_t KcosthCM[NMAXK]; 
+  Float_t KphiCM[NMAXK]; 
+  Float_t KenergyCM[NMAXK]; 
+  Int_t   KLund[NMAXK]; 
+  Int_t   KMCIdx[NMAXK];
+  Int_t   KTrkIdx[NMAXK];
+
+  Int_t   nPi0;
+  Float_t Pi0Mass[NMAXPI0];  
+  Float_t Pi0energyCM[NMAXPI0]; 
+  Float_t Pi0p3CM[NMAXPI0]; 
+  Float_t Pi0costhCM[NMAXPI0]; 
+  Float_t Pi0phiCM[NMAXPI0]; 
+  Int_t   Pi0Lund[NMAXPI0];   
+  Int_t   Pi0MCIdx[NMAXPI0];
+  Int_t   Pi0d1Lund[NMAXPI0];  
+  Int_t   Pi0d1Idx[NMAXPI0];  
+  Int_t   Pi0d2Lund[NMAXPI0];  
+  Int_t   Pi0d2Idx[NMAXPI0];  
+
+  Int_t   nGam;
+  Float_t GamenergyCM[NMAXGAM]; 
+  Float_t Gamp3CM[NMAXGAM]; 
+  Float_t GamcosthCM[NMAXGAM]; 
+  Float_t GamphiCM[NMAXGAM]; 
+  Int_t   GamLund[NMAXGAM];   
+  Int_t   GamMCIdx[NMAXGAM];
+  Float_t GamLat[NMAXGAM];
+  Float_t GamA42[NMAXGAM];
+  Int_t   GamnCrys[NMAXGAM];
+  Float_t GamClosestBumpDist[NMAXGAM];
+  Float_t GamClosestTrkDist[NMAXGAM];
+
+  Int_t   nKs;
+  Float_t KsMass[NMAXKS];  
+  Float_t Ksp3CM[NMAXKS]; 
+  Float_t KsenergyCM[NMAXKS]; 
+  Float_t KscosthCM[NMAXKS]; 
+  Float_t KsphiCM[NMAXKS]; 
+  Int_t   KsLund[NMAXKS];   
+  Int_t   KsMCIdx[NMAXKS];
+  Float_t KsVtxx[NMAXKS];  
+  Float_t KsVtxy[NMAXKS];  
+  Float_t KsVtxz[NMAXKS];
+  Float_t KsFlightBSLen[NMAXKS];
+  Float_t KsFlightBSErr[NMAXKS];
+  Int_t   Ksd1Lund[NMAXKS];  
+  Int_t   Ksd1Idx[NMAXKS];  
+  Int_t   Ksd2Lund[NMAXKS];  
+  Int_t   Ksd2Idx[NMAXKS];  
+
+  Int_t   nEta;
+  Float_t EtaMass[NMAXETA];  
+  Float_t EtaenergyCM[NMAXETA]; 
+  Float_t Etap3CM[NMAXETA]; 
+  Float_t EtacosthCM[NMAXETA]; 
+  Float_t EtaphiCM[NMAXETA]; 
+  Int_t   EtaLund[NMAXETA];   
+  Int_t   EtaMCIdx[NMAXETA];
+  Int_t   Etad1Lund[NMAXETA];  
+  Int_t   Etad1Idx[NMAXETA];  
+  Int_t   Etad2Lund[NMAXETA];  
+  Int_t   Etad2Idx[NMAXETA];  
+  Int_t   Etad3Lund[NMAXETA];  
+  Int_t   Etad3Idx[NMAXETA];  
+  Int_t   EtanDaus[NMAXETA];  
+
+  Int_t   nEtaP; // for eta' we need to cover eta' -> pipieta and rho0gamma
+  Float_t EtaPMass[NMAXETAP];  
+  Float_t EtaPenergyCM[NMAXETAP]; 
+  Float_t EtaPp3CM[NMAXETAP]; 
+  Float_t EtaPcosthCM[NMAXETAP]; 
+  Float_t EtaPphiCM[NMAXETAP]; 
+  Int_t   EtaPLund[NMAXETAP];   
+  Int_t   EtaPMCIdx[NMAXETAP];
+  Int_t   EtaPd1Lund[NMAXETAP];  
+  Int_t   EtaPd1Idx[NMAXETAP];  
+  Int_t   EtaPd2Lund[NMAXETAP];  
+  Int_t   EtaPd2Idx[NMAXETAP];  
+  Int_t   EtaPd3Lund[NMAXETAP];  
+  Int_t   EtaPd3Idx[NMAXETAP];  
+  Int_t   EtaPnDaus[NMAXETAP];  
+
+  Int_t   nRhoC;
+  Float_t RhoCMass[NMAXRHOC];  
+  Float_t RhoCp3CM[NMAXRHOC]; 
+  Float_t RhoCenergyCM[NMAXRHOC]; 
+  Float_t RhoCcosthCM[NMAXRHOC]; 
+  Float_t RhoCphiCM[NMAXRHOC]; 
+  Int_t   RhoCLund[NMAXRHOC];   
+  Int_t   RhoCMCIdx[NMAXRHOC];
+  Int_t   RhoCd1Lund[NMAXRHOC];  
+  Int_t   RhoCd1Idx[NMAXRHOC];  
+  Int_t   RhoCd2Lund[NMAXRHOC];  
+  Int_t   RhoCd2Idx[NMAXRHOC];  
+
+  Int_t   nRho0;
+  Float_t Rho0Mass[NMAXRHO0];  
+  Float_t Rho0p3CM[NMAXRHO0]; 
+  Float_t Rho0energyCM[NMAXRHO0]; 
+  Float_t Rho0costhCM[NMAXRHO0]; 
+  Float_t Rho0phiCM[NMAXRHO0]; 
+  Int_t   Rho0Lund[NMAXRHO0];  
+  Int_t   Rho0MCIdx[NMAXRHO0]; 
+  Int_t   Rho0d1Lund[NMAXRHO0];  
+  Int_t   Rho0d1Idx[NMAXRHO0];  
+  Int_t   Rho0d2Lund[NMAXRHO0];  
+  Int_t   Rho0d2Idx[NMAXRHO0];  
+
+  Int_t   nPhi;
+  Float_t PhiMass[NMAXPHI];  
+  Float_t Phip3CM[NMAXPHI]; 
+  Float_t PhienergyCM[NMAXPHI]; 
+  Float_t PhicosthCM[NMAXPHI]; 
+  Float_t PhiphiCM[NMAXPHI]; 
+  Int_t   PhiLund[NMAXPHI];  
+  Int_t   PhiMCIdx[NMAXPHI]; 
+  Int_t   Phid1Lund[NMAXPHI];  
+  Int_t   Phid1Idx[NMAXPHI];  
+  Int_t   Phid2Lund[NMAXPHI];  
+  Int_t   Phid2Idx[NMAXPHI];  
+
+  Int_t   nKstar0;
+  Float_t Kstar0Mass[NMAXKSTAR0];  
+  Float_t Kstar0p3CM[NMAXKSTAR0]; 
+  Float_t Kstar0energyCM[NMAXKSTAR0]; 
+  Float_t Kstar0costhCM[NMAXKSTAR0]; 
+  Float_t Kstar0phiCM[NMAXKSTAR0]; 
+  Int_t   Kstar0Lund[NMAXKSTAR0];  
+  Int_t   Kstar0MCIdx[NMAXKSTAR0]; 
+  Int_t   Kstar0d1Lund[NMAXKSTAR0];  
+  Int_t   Kstar0d1Idx[NMAXKSTAR0];  
+  Int_t   Kstar0d2Lund[NMAXKSTAR0];  
+  Int_t   Kstar0d2Idx[NMAXKSTAR0];  
+
+  Int_t   nP;
+  Float_t PMass[NMAXP];
+  Float_t Pp3CM[NMAXP]; 
+  Float_t PcosthCM[NMAXP]; 
+  Float_t PphiCM[NMAXP]; 
+  Float_t PenergyCM[NMAXP]; 
+  Int_t   PLund[NMAXP]; 
+  Int_t   PMCIdx[NMAXP];
+  Int_t   PTrkIdx[NMAXP];
+
+  Int_t   nSig0;
+  Float_t Sig0Mass[NMAXSIG0];  
+  Float_t Sig0p3CM[NMAXSIG0]; 
+  Float_t Sig0energyCM[NMAXSIG0]; 
+  Float_t Sig0costhCM[NMAXSIG0]; 
+  Float_t Sig0phiCM[NMAXSIG0]; 
+  Int_t   Sig0Lund[NMAXSIG0];   
+  Int_t   Sig0MCIdx[NMAXSIG0];
+  Int_t   Sig0d1Lund[NMAXSIG0];  
+  Int_t   Sig0d1Idx[NMAXSIG0];  
+  Int_t   Sig0d2Lund[NMAXSIG0];  
+  Int_t   Sig0d2Idx[NMAXSIG0];  
+
+  Int_t   nLam0;
+  Float_t Lam0Mass[NMAXLAM0];  
+  Float_t Lam0p3CM[NMAXLAM0]; 
+  Float_t Lam0energyCM[NMAXLAM0]; 
+  Float_t Lam0costhCM[NMAXLAM0]; 
+  Float_t Lam0phiCM[NMAXLAM0]; 
+  Int_t   Lam0Lund[NMAXLAM0];   
+  Int_t   Lam0MCIdx[NMAXLAM0];
+  Float_t Lam0Vtxx[NMAXLAM0];  
+  Float_t Lam0Vtxy[NMAXLAM0];  
+  Float_t Lam0Vtxz[NMAXLAM0];
+  Float_t Lam0FlightBSLen[NMAXLAM0];  
+  Float_t Lam0FlightBSErr[NMAXLAM0];  
+  Int_t   Lam0d1Lund[NMAXLAM0];  
+  Int_t   Lam0d1Idx[NMAXLAM0];  
+  Int_t   Lam0d2Lund[NMAXLAM0];  
+  Int_t   Lam0d2Idx[NMAXLAM0]; 	
+
+  Int_t   KSelectorsMap[MAXNCANDS];
+  Int_t   piSelectorsMap[MAXNCANDS];
+  Int_t   pSelectorsMap[MAXNCANDS];
+  Int_t   TRKnSvt[MAXNCANDS];
+  Int_t   TRKLund[MAXNCANDS];
+  Float_t TRKdedxdch[MAXNCANDS];
+  Float_t TRKDrcTh[MAXNCANDS];
+  
+
+  //-------------------Derived quantities
+  Int_t   TagIdx;//index of Tag in the Tag Array
+  Int_t   GenTagIdx;//index of generated Tag
+
+  //
+  Int_t   goodrecoid;//id of ith reconstruction
+
+  //
+  Float_t tagmass;//unconstrained tag mass
+  Float_t tagpstar;//cm momentum of tag
+  Float_t tagenergycm;//cm energy of tag
+  Int_t   tagcharge;//+-1
+  Float_t tagflights;//flight significance of tag from BeamSpot
+  Int_t   tagmode;//tag decay mode
+  Int_t   taglund;//D0,D+,...=+-1,+-2,..
+  Int_t   tagdstarlund;//0=no D*, 1=D0pi+, 2=D0pi0, 4=D+pi0, 3=D0gamma
+  Float_t tagdstarmass;//unconstrained D*  mass
+  Float_t tagdstardauangle;//angle of pi/gam daughter w.r.t to D* in cm frame.
+  Float_t tagdstardecayangle;//angle of pi/gam dau w.r.t to D* in D* frame
+  Float_t tagdstargamenergy;//angle of pi/gam dau w.r.t to D* in D* frame
+  Int_t   tagndaus;//number tag daughters
+  Float_t taglogvtxprob;//log10(tag fit prob)  from first tag fit
+  Int_t   tagmctrue;//true tag mc index
+  Int_t   tagmctruebad;//default truth-matching
+  Int_t   tagmctrueparent;//default truth-matching
+  Int_t   tagqual;//track quality of tag (defined in Beta modules)
+  Int_t   tagpid;//if tag has K+, pid selector (1->5)
+  Int_t   tagpipid;//if tag has pi+, pid selector (1->5)
+  Int_t   tagppid;//if tag has p+, pid selector (1->5)
+
+  Float_t tagksflights;//if tag has Ks,flight sig from BeamSpot  
+  Float_t tagksflightcos;//,, angle between Ks p3 and Ks flight direction from mother
+  Float_t tagksflightcosbeam;//,, angle between Ks p3 and Ks flight direction from BeamSpot
+  Float_t tagksgamconvmass;//,, mass of pi+pi- if one assigns electron masses
+  Float_t tagpi0gamenergy;//if tag has pi0, energy of lower energy gamma OR 
+	//if tag dau is rhoC then take low energy gamma of it's pi0
+  Float_t tagetagamenergy;//if tag has eta(or pi0 from eta), energy of lower energy gamma
+
+  TVector3 Tagp3vecCM;//3-momentum vector of Tag in c.m.
+  TLorentzVector Tagp4CM;//4-momentum vector of Tag in c.m.
+  TLorentzVector Tagp4Lab;//4-momentum vector of Tag in lab
+
+  Int_t startfile;	
+  Int_t endfile;	
+	
+  //
+  void SearchOptimizationGrid(RooArgList* vars,DRecoTagOptimizer* fcn,Float_t minpurity);
+private:
+
+  Int_t   d1Idx;
+  Int_t   d2Idx;
+  Int_t   d3Idx;
+  Int_t   d4Idx;
+  Int_t   d5Idx;     
+};
+  
+
+#endif
+

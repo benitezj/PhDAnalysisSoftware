@@ -1,0 +1,127 @@
+#ifndef DRecoDsToEllNuPlots_hh
+#define DRecoDsToEllNuPlots_hh
+#include <TLegend.h>
+
+// Get inherited headers
+#include "DRecoDsToEllNuAnalysis.hh"
+#include "DRecoTagAnalysis.hh"
+#include "DRecoDsInclusiveAnalysis.hh"
+#include "THStack.h"
+
+#define NNXT         7
+#define NNXR         5
+#define NSignalMode  6
+#define NEExtraCut   2
+
+class DRecoDsToEllNuPlots:public DRecoDsInclusiveAnalysis
+{
+  ClassDef(DRecoDsToEllNuPlots, 1) ;
+
+public:
+  DRecoDsToEllNuPlots() ;
+  ~DRecoDsToEllNuPlots() ;
+
+  // BF calculation
+  void DetermineBF(Int_t SignalMode,Bool_t useTrueValues) ;
+  Float_t ComputeBF(TFile* FDenomFitResults,TFile* FNumFitResults,TFile* FEffDemon,TFile* FEffNum,Int_t SignalMode,Bool_t useTrueValues) ;
+  Float_t Lambda() ;
+  Float_t fDsFromBF(Float_t BF, Float_t StatError, Float_t SystError, Int_t SignalMode) ;
+  // Limit extraction
+  Float_t LimitExtraction() ;
+  Float_t L(Float_t nDsE, Float_t nDsEHat, Float_t sigma_nDsE, Float_t B, Float_t nDsToENu, Float_t sigma_n) ;
+  Float_t GetNDs(TFile*) ;
+  Float_t GetEfficiency(TFile*,TFile*,TFile*,TFile*,Int_t) ;
+  void DenominatorSystematics(Int_t SignalMode) ;
+
+  // General
+  TString suffix() ;
+  void PrintCanvas(TCanvas* canvas, TString printName) ;
+  TLegend MakeLegend(Float_t left, Float_t top, Float_t right, Float_t bottom) ;
+  TString FloatToString(Float_t value, Int_t NDP) ;
+  TString FloatToString(Float_t value) ;
+
+  void ColorScheme() ;
+  Int_t NEventsGenerated[NSignalMode] ;
+
+  void ThesisPlots() ;
+  void weightsPlots() ;
+  void ThesisTH1F(TH1* base) ;
+  void ThesisTHStack(THStack* base) ;
+
+  // Systematics
+  void      MakePIDTree() ;
+  void         PIDStudy() ;
+  void    TrackingError() ;
+  void CutUncertainties() ;
+  void        KKsRoofit() ;
+
+  // Roofit stuff
+  void Roofit() ;
+  void MakeResidualsPlot(RooRealVar* rrv,RooAddPdf model,RooDataHist* rdh,RooAbsPdf* rhp1, RooAbsPdf* rhp2, Int_t color1, Int_t color2, TH1F* hTrue, TH1F* hFit,Bool_t showComponent,TCanvas* canvas, TString printName) ;
+void MakeResidualsPlot(RooRealVar* rrv,RooAddPdf model,RooDataHist* rdh,RooAbsPdf* rhp1, RooAbsPdf* rhp2, Int_t color1, Int_t color2, TH1F* hTrue, TH1F* hFit,Bool_t showComponent,TCanvas* canvas, TString printName,Bool_t DataLabel) ;
+
+  void PlotConfidenceInterval() ;
+
+  // Main plots, with and without EExtra cut, multiplicity weighted and MC weighted run by run to luminosity and cross section
+  void PlotAll() ;
+  void Mm2TrueParticles() ;
+  void mm2DsToENu() ;
+
+  // SprBumpHunter
+  void PrintBumpHunterFiles() ;
+  void BumpPlots() ;
+  
+  // Truthmatching
+  void EllTruth() ;
+  void PrintDaughters(Int_t count, Int_t SignalMode, Int_t EllMothDauLen, Int_t rawEllMothDauLen, Int_t EllMothLund, Int_t sibling[14], Int_t rawSibling[14], Int_t nhPlus, Int_t nhPlusStar, Int_t nh0, Int_t nh0Star, Int_t nKPlus, Int_t nKPlusStar, Int_t nK0, Int_t nK0Star, Int_t ng) ;
+  Bool_t match(Int_t d1, Int_t d2, Int_t d3, Int_t d4, Int_t d5, Int_t S1, Int_t S2, Int_t S3, Int_t S4, Int_t S5) ;
+  Bool_t match(Int_t d1, Int_t d2, Int_t d3, Int_t d4, Int_t S1, Int_t S2, Int_t S3, Int_t S4) ;
+  Bool_t match(Int_t d1, Int_t d2, Int_t d3, Int_t S1, Int_t S2, Int_t S3) ;
+  Bool_t match(Int_t d1, Int_t d2, Int_t S1, Int_t S2) ;
+  Bool_t ish(Int_t lund) ;
+  Bool_t isK(Int_t lund) ;
+  Bool_t ishPlus(Int_t lund) ;
+  Bool_t ish0(Int_t lund) ;
+  Bool_t ishPlusStar(Int_t lund) ;
+  Bool_t ish0Star(Int_t lund) ;
+  Bool_t isKPlus(Int_t lund) ;
+  Bool_t isK0(Int_t lund) ;
+  Bool_t isKPlusStar(Int_t lund) ;
+  Bool_t isK0Star(Int_t lund) ;
+  Bool_t isDStar(Int_t lund) ;
+  Bool_t isBaryon(Int_t lund) ;
+
+  // Common variables
+  TChain* chain ;
+  TString SPModeName[NSPModes] ;
+  TString  SignalModeName[NSignalMode] ;
+  TString  SignalModeNameLaTeX[NSignalMode] ;
+  TString SignalModeTitle[NSignalMode] ;
+  Int_t   SignalModeColor[NSignalMode] ;
+  TString RunName[NRuns] ;
+  TString NXRName[NNXR] ;
+  TString NXRTitle[NNXR] ;
+  TString date ;
+  Float_t NXTWeights[NNXT] ;
+  Float_t luminosity[17] ;
+  TString EExtraCutString[NEExtraCut] ;
+
+  Int_t   EExtraCut  ;
+  Int_t   nXR        ;
+  Int_t   nXT        ;
+  Int_t   muSelector ;
+  Int_t   eSelector  ;
+  Int_t   EllMode    ;
+  Int_t   EllLund    ;
+  Int_t   SignalMode ;
+  Int_t   SPMode     ;
+  Int_t   run        ;
+  Float_t weight     ;
+
+  Float_t Ellp3Lab      ;
+  Float_t EExtraNeutral ;
+  Float_t PMissCosTh    ;
+
+} ;
+
+#endif

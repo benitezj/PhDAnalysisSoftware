@@ -1,0 +1,54 @@
+#ifndef DRecoResiduals_hh
+#define DRecoResiduals_hh
+#include "RooPlot.h"
+#include <TPad.h>
+#include <TLine.h>
+#include <TH1F.h>
+#include <TString.h>
+
+class DRecoResiduals:public TNamed{
+  ClassDef(DRecoResiduals,1);
+
+ public:
+  DRecoResiduals(const char* Name,TH1* HData, TH1* HFit);
+  ~DRecoResiduals();
+
+  TH1F* GetResidualHisto(){return (TH1F*)H1Residuals->Clone();}
+  TH1F* GetNormResidualHisto(){return (TH1F*)H1NormResiduals->Clone("clone");}
+  TH1F* GetChisquareHisto(){return (TH1F*)HChisquare->Clone();}
+  TH1F* GetNormResidualProjection();
+  Float_t GetChisquare(){return chisquare;}
+  Float_t GetChisquarePerNdof(){return chisquare/ndof;}
+  void MakeFitPlotWithResiduals(TCanvas* C,RooPlot* rooplot);
+  void MakeFitPlotWithResiduals(TCanvas* C,RooPlot* rooplot,TH1* Hist);
+
+  void FitHasError(Bool_t fithaserror){FitError=fithaserror;ComputeResiduals();}
+
+  // Moved this to public so I can edit the properties
+  TH1F* H1NormResiduals;
+
+ private: 
+
+  void DrawNormResiduals();
+  
+  TH1* Histo;
+  TH1* FitHisto;
+  TH1F* H1Residuals;
+  
+  TH1F* HNormResProj;
+  TH1F* HChisquare;
+  Float_t chisquare;
+  Int_t ndof;
+  TString name;
+  void ComputeResiduals();
+  Float_t GetIntegralPdf(Float_t xlow,Float_t xhigh);  
+  Bool_t FitError;
+
+  //
+  TPad* fitpad;
+  TPad* respad;
+
+};
+  
+#endif
+

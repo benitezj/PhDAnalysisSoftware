@@ -1,0 +1,6 @@
+*
+* default PAW logon kumac for workdir package
+*
+mess pawlogon.kumac executing
+exec ~/.pawlogon.kumac
+return

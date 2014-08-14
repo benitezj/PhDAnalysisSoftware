@@ -1,0 +1,346 @@
+$Id: README,v 1.9 2006/06/07 02:04:56 avtelnov Exp $
+
+o Introduction
+
+  This package contains a main AppModule that parses through a top-level 
+BtaCandidate list and fill in ntuple variables for all daughters in the 
+decay tree. The top-level list can be either created from a user analysis 
+module or directly from a presistent candidate list in skims. The content 
+of the ntuple is configurable through tcl commands. Users can also create
+their own variables in the form of UsrData in their analysis module. The 
+module in this package will dump (almost) all UsrData to the ntuple.
+
+  The ntuple making module is named BtuTupleMaker. You should put this module
+after your analysis module.
+
+o This package contains:
+
+  AppModule: BtuMyAnalysis  -- Example user analysis module
+             BtuTupleMaker  -- Main ntuple maker module:
+                o Manage overall configurations
+                o Build genealogy indices, and indices to final track block
+                o Call BtuEventBlock, BtuMCBlock, BtuCandBlock, 
+                  BtuTrkContentFiller and BtuGamContentFiller to fill
+                  event block, mc truth block, candidate blocks and extra 
+                  track and gamma information.
+                o And finally dump data to an ntuple.
+
+
+  Classes:   BtuEventBlock   -- Create and fill ntuple columns for event block.
+             BtuMCBlock      -- Create and fill ntuple columns for mc truth 
+                                list.
+             BtuCandBlock    -- Create and fill ntuple columns for candidate 
+                                blocks.
+
+             BtuContentFillerBase -- Base class for BtuGamContentFiller and 
+                                     BtuTrkContentFiller.
+             BtuTrkContentFiller  -- Loop over requested extra info for track 
+                                     block and call classes that actuall 
+                                     obtain and fill the info. 
+             BtuGamContentFiller  -- Loop over requested extra info for track 
+                                     block and call classes that actuall 
+                                     obtain and fill the info.
+
+             BtuContentBase    -- Base class for classes that actuall fill 
+                                  extra track and gamma info
+             BtuTrkContentHots -- Hit-on-track information
+             BtuTrkContentEff  -- Track efficiency from CDB track eff tables
+             BtuTrkContentBitMap -- Selectors bit map (PID, track quality...)
+             BtuGamContentEMC  -- gamma EMC info
+
+             BtuUtil  -- Contains some utility functions.
+
+
+o Tcl configuration (by talking to BtuTupleMaker)
+
+
+  - Input top-level candidate list e.g.,
+
+       listToDump set myB0List
+
+    If you have more than one list to dump, you should use the merging 
+    ability of SimpleComposition to produce a single list.
+
+  - Some other general job configuration tcl parameters:
+
+    tcl                    default                 what
+    ------------------------------------------------------------------------
+    truthAssociator         GHit
+    fillMC                  true            Fill MC info
+    checkClones             true            Only one copy of each particle
+                                             is stored. If there are kinematic
+                                             fits and the info of the daughters
+                                             needs to be stored, this flag
+                                             should be set false.
+    baseTrackList           ChargedTracks   
+    ntpAuxListContents                      A string of list of names separeted
+                                             by a space.
+    fillAllCandsInList                      A string of list of names separeted
+                                             by a space.
+    wantATrkBlock           false           If the final states don't contain
+                                             any charged tracks, but you still
+                                             want one.
+    writeEveryEvent         false           If true, event level info and (if 
+                                             requested) MC will be recorded 
+                                             even if there is 0 candidate in
+                                             this event.
+    partialDecayTreeOK      false           If true, blocks are allowed to be
+                                             missing.
+    checkClones             true            Do not store clones of candidates.
+                                             If false, every candidate will be
+                                             stored regardless clones.
+    checkCloneBlocks        ""              A list of block names where you
+                                             want to check clones.
+
+  - Event block, e.g.,
+
+       eventTagsBool      set "BGFMultiHadron Dstarlnu"
+       eventTagsInt       set "nTracks nGoodTrkLoose nGoodTrkTight"
+       eventTagsFloat     set "R2All"
+
+    The argument is a string of variable names in tag database, separated by
+    a space, e.g.,
+
+       eventBlockContents   set "EventID CMp4 BeamSpot UsrData(myEventData)"
+
+    The argument is a string of keywords that are recognized by the class 
+    BtuEventBlock. Each  keyword will instruct the class to dump a set of 
+    values to the ntuple. 
+
+    Currently avaiable keywords and ntuple varialbes are:
+
++-------------+-----------------------------------------+---------------------+
+| Keyword         ntuple variables                         note               |
++-------------+-----------------------------------------+---------------------+
+| EventID       runNumber, platform, partition,           event id            |
+|               upperID, lowerID, majorID, date (YYYYMM CondAlias)            |
+|                                                                             |
+| CMp4          eePx, eePy, eepz, eeE                     The 4-momentum of   |
+|                                                         the e+e- system at  |
+|                                                         the lab frame       |
+|                                                                             |
+| BeamSpot      beamSX, beamSY, beamSZ, beamSCovXY,       beamspot centroid   |
+|               beamSCovYY, beamSCovZZ, beamSCovXZ        and some elements   |
+|                                                         of covariant matrix |
+|                                                                             |
+| UsrData(xx)   (All user data associated with the                            |
+|                UsrEventBlock named "xx".                                    |
+|                The ntuple variable name == the                              |
+|                UsrData variable name)**                                     |
++-------------+-----------------------------------------+---------------------+
+**The keyword UsrData must followed by a pair of parantheses in which a 
+  list of UsrEventBlock names separated by a comma, e.g., 
+  UsrData(evtBlock1,evtBlock2,evtBlock3).
+
+
+  - MC truth block, e.g.,
+
+       mcBlockContents    set "Mass CMMomentum Momentum Vertex"
+
+    The argument is a string of keywords that are recognized by the class
+    BtuMCBlock.
+
+    Currently avaiable keywords and ntuple varialbes are:
+
++-------------+-------------------------------------------+-------------------+
+| Keyword         ntuple variables**                          note            |
++-------------+-------------------------------------------+-------------------+
+| (none)         mcLen, mcLund, mothIdx                     no keyword needed |
+|                dauLen, dauIdx                             *                 |
+|                                                                             |
+| Mass           mcmass                                                       |
+|                                                                             |
+| CMMomentum     mcp3CM, mccosthCM, mcphiCM                 center-of-mass    |
+|                                                           momentum          |
+|                                                                             |
+| Momentum       mcp3, mccosth, mcphi                        lab momentum     |
+|                                                                             |
+| Vertex         mcVtxx, mcVtxy, mcVtxz                      decay vertex     |
++-------------+-------------------------------------------+-------------------+
+** Except mcLen, all other variables are a vector with length == mcLen.
+*  This vector is re-ordered in such a way that the daughters of a mother are
+   next to each other. The variable dauIdx stores the index of the first 
+   daughter in this list, and dauLen is the number of daughters. So the indices
+   of the daughters of particle [k] are dauIdx[k], dauIdx[k]+1, ...
+   dauIdx[k]+dauLen-1.
+
+  - Candidate blocks
+
+    Each type of particle must be assigned to an ntuple block. For example,
+    the decay chain is B- -> D0 K-,  D0 -> K- pi+ pi0,  pi0 -> gamma gamma,
+    the configuration would look like
+
+       ntpBlockConfigs  set "B-     B       2   20"
+       ntpBlockConfigs  set "D0     D0      3   50"
+       ntpBlockConfigs  set "K+     K       0   10"
+       ntpBlockConfigs  set "pi+    Pi      0   20"
+       ntpBlockConfigs  set "pi0    Pi0     2   30"
+       ntpBlockConfigs  set "gamma  gamma   0   30"
+
+    where the first entry in the string is the particle's pdt name, second
+    the ntuple block name, third the maximum number daughters, and fourth
+    the maximum length of that block.
+
+    The order of the blocks is important. Mother particle should always
+    on top of daughter particles.
+
+    You can put more than one type of particle to the same block, but
+    the reverse is not true.
+
+    The basic information for each block is (for example D0 block)
+
+      nD0           : number of candidates
+      D0Lund(nD0)   : Lund ID 
+      D0diLund(nD0) : Lund id of i-th daughter
+      D0diIdx(nD0)  : Index of i-th daughter in its block
+
+    where the index begins with 0, so if you are using PAW, you have to add
+    one to get correct index.
+    
+    An extra block for charged tracks will be added if it is requested with
+    command ntpBlockToTrk, e.g.,
+
+      ntpBlockToTrk set "K Pi"
+
+    where the value is a list of _block_ name which you wish to make a link
+    to charged track block (default name "TRK"). The block, for example, "Pi"
+    will have a column, PiTrkIdx(nPi).
+
+    The content of each block is configured by ntpBlockContents with a string
+    of keywords following the block name and a colon, e.g.,
+
+       ntpBlockContents set "D0 : Mass Vertex VtxChi2 UsrData(myD0CandData)"
+
+    Currently avaiable keywords and ntuple varialbes are:
+
++-------------+------------------------------------------+--------------------+
+| Keyword         ntuple variables for Block X             note               |
++-------------+------------------------------------------+--------------------+
+| MCIdx         XMCIdx                                     index linked to    |
+|                                                          MC block           |
+|                                                                             |
+| Mass          XMass, XMassErr                           BtaCandidate::mass()|
+|                                                                             |
+| Momentum      Xp3, Xcosth, Xphi                          lab momentum       |
+|                                                                             |
+| CMMomentum    Xp3CM, XcosthCM, XphiCM                    c.m. momentum      |
+|                                                                             |
+| Vertex        XVtxx, XVtxy, XVtxz                        decay vertex       |
+|                                                                             |
+| VtxChi2       XnDof, XChi2, XVtxStatus                   fit Chi-squared    |
+|                                                                             |
+| Doca          XDoca, XDocaErr, XDoca_z, XDoca_zErr       DOCA w.r.t beamspot|
+|                                                                             |
+| DocaXY        XDocaXY_xy, XDocaXY_xyErr, XDocaXY_z,      DOCA w.r.t beamspot|
+|               XDocaXY_zErr                               using xy projection|
+|                                                                             |
+| Poca          XPoca_x, XPoca_y, XPoca_z                  POCA to beamspot   |
+|                                                                             |
+| PocaXY        XPocaXY_x, XPocaXY_y, XPocaXY_z            POCA to beamspot   |
+|                                                          using xy projection|
+|                                                                             |
+| PocaErr       XPoca_xErr, XPoca_zErr, XPoca_zErr         Error on POCA**    |
+|                                                                             |
+| PocaCov       XPoca_cxx, XPoca_cyy, XPoca_czz            Cov. Matrix on     |
+|               XPoca_cxy, XPoca_cyz, XPoca_czx            POCA**             |
+|                                                                             |
+| nDaughters    nDaus                                                         |
+|                                                                             |
+| UsrData(xx)  (All user data associated with the          ***                |
+|                UsrEventBlock named "xx".                                    |
+|                The ntuple variable name == the                              |
+|                "X"+ UsrData variable name)                                  |
+|                                                                             |
+| PIDWeight(xx) (PID selector name such as KLHLoose)       ****               |
+|               XKLHLoose_w, XKLHLoose_werr,               _w = weight        |
+|               XKLHLoose_stat                             _werr = error      |
+|                                                          _stat = status (#) |
+| TagVtx        Tagging and tag-side vertex (delta T, etc                     |
+|                                                                             |
+| Flight        Flight length, error and angle momentum wrt                   |
+|               vertex displacement (from mother's vertex)                    |
+|                                                                             |
+| FlightBS      Flight length, error and angle momentum wrt                   |
+|               vertex displacement (from beamspot)                           |
+|                                                                             |
+| Dalitz        Msq12, Msq23, Msq32 (only for three-body decay)               |
+|                                                                             |
+| DalitzMC      Msq12MC, Msq23MC, Msq32MC (MC truth for three-body decay)     |
+|                                                                             |
++-------------+-------------------------------------------+-------------------+
+** "Poca" and/or "PocaXY" are required for using "PocaErr" or "PocaCov".
+   If you use "Poca", all variables for PocaErr and PocaCov are calculated for
+   3-D point of closest approach. 
+   If you use "PocaXY", all variables for PocaErr and PocaCov are calculated 
+   from x-y plane projection, and the variable name will be *PocaXY_*, instead
+   of *Poca_* .
+
+***The keyword UsrData must be followed by a pair of parantheses in which a 
+  list of UsrCandBlock names separated by a comma, e.g., 
+  UsrData(evtBlock1,evtBlock2,evtBlock3).
+
+****The keyword PIDWeight must be followed by a pair of parantheses in between
+  a pid selector name, e.g., PIDWeight(KLHLoose).
+  Although it can take a list of names like UsrData, it doesn't really make
+  sense to use the one that is not used for the input BtaCandidate, and it can
+  cause jobs to crash.
+
+
+# For the meaning of weight, error and status of PID weight, please see PID
+  documentation (e.g., http://www.slac.stanford.edu/BFROOT/www/Physics/Tools/Pid/pid.html)
+
+
+  - Extra info for TRK and gamma blocks
+
+    Each set of information is configured by trkExtraContents and 
+    gamExtraContents with an argument that looks like 
+    keyword:argument1,argument2,..., e.g.,
+
+       trkExtraContents set HOTS:detailSVT,detailDCH
+       trkExtraContents set Eff:ave,charge
+       trkExtraContents set BitMap:KSelectorsMap,eSelectorsMap,TracksMap
+       gamExtraContents set EMC
+
+    Currently available keywords and arguments are:
+
+TRK
++---------+------------------+------------------------------------+-----------+
+| Keyword    args               ntuple vars for Block TRK            note     |
++---------+------------------+------------------------------------+-----------+
+| HOTS      (none)             TRKnHit, TRKnSvt, TRKnDCH                      |
+|           detailSVT          TRKnHitXY, TRKHitZ,                            |
+|                              TRKnSvtXY, TRKnSvtZ,                           |
+|                              TRKsvtViewXY1 ... TRKsvtViewXY5                |
+|                              TRKsvtViewZ1 ... TRKsvtViewZ5                  |
+|           detailDCH          TRKnHitXY, TRKHitZ,                            |
+|                              TRKnDchXY, TRKnDchZ,                           |
+|                              TRKdchFirst, TRKdchLast                        |
+|                                                                             |
+| Eff       ave,               TRKEff, TRKEfferr                              |
+|           charge             TRKchEff, TRKchEfferr                          |
+|                                                                             |
+| BitMap   <SelectorsBitMap>   (e.g., KSelectorsMap, TracksMap)     **        |
+|                                                                             |
+| Dirc      (none)             TRKDrcTh, TRKDrcThErr, TRKDrcNph    angle,err, |
+|                              TRKDrcNbgph, TRKDrcDeltaMom         # sig and  |
+|                              TRKdedxdch, TRKdedxdchsamp,         bg photons |
+|                              TRKDchDeltaMom                      momentum   |
+|                                                                  diff       |
+|           pi, K, p, mu, e    TRKDrcThExp_<arg>, TRKNphExp_<arg>  expected   |
+|                                                                  value given|
+|                                                                   particle  |
+|                                                                    type     |
+|                                                                             |
++---------+------------------+------------------------------------+-----------+
+** For PID selectors map, see PID documentation; for TracksMap, see the tcl
+   commands for TrkMicroDispatch module in BetaMicro/BtaGoodTrackSequence.tcl.
+
+gamma
++---------+------------------+------------------------------------+-----------+
+| Keyword    args               ntuple vars for Block g              note     |
++---------+------------------+------------------------------------+-----------+
+| EMC       (none)             gLat, gECal, gErawCal, gCentx                  |
+|                              gCenty, gCentz, gA42, gnCrys                   |
+|                              
++---------+------------------+------------------------------------+-----------+
+
