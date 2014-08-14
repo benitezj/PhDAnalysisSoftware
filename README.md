@@ -1,4 +1,4 @@
-** SOFTWARE USED FOR PHD THESIS PROJECTS**
+**SOFTWARE USED FOR PHD THESIS PROJECTS**
 
 *Measurement of the decay rates: Ds --> l + neutrino  ( l = electron, muon, tau)*
 
@@ -15,7 +15,8 @@
   - Runs the event reconstruction and selection
   - Applies the data models and fits
 
-*Misc Tools*
+*Misc Tools:*
+
 -`scripts`: 
   - controlling batch jobs
   - library of data models
